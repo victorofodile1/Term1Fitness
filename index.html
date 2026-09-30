@@ -324,8 +324,8 @@ const dayState = k=>(S.days[k]=S.days[k]||{t:{},log:{}});
 
 /* ---------- cloud save (Supabase) ---------- */
 // Paste your values from Supabase: Project Settings > API. Use the anon / publishable key, never the service_role / secret key.
-const SUPABASE_URL = 'PASTE_YOUR_SUPABASE_PROJECT_URL';
-const SUPABASE_ANON_KEY = 'PASTE_YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = 'https://vmdafghqxkmzrerqdfpr.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_QjDXb4yNRsvnKL6QWbakmg_-XNGM5fv';
 const CLOUD = {client:null,user:null,status:'',timer:null};
 const cloudReady = ()=>!!CLOUD.client;
 function initCloud(){
