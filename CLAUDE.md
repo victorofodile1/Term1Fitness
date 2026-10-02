@@ -9,7 +9,7 @@ Victor, a gym beginner (has only benched about 10 times) based in London. Uses a
 ## Goals (Oct 1 to Dec 31, 2026)
 
 1. **Six-pack / low body fat.** Starting about 83 kg at an estimated 22% body fat. Aesthetic goal: wide shoulders, wide back, slim hips.
-2. **100 kg bench press 1 rep max**, tested Wednesday 30 December 2026. Current 1RM about 70 kg (a grinder).
+2. **100 kg bench press 1 rep max**, tested Monday 28 December 2026. Current 1RM about 70 kg (a grinder).
 3. Honest expectation already given to Victor: the six-pack is likely with consistency; 100 kg is possible but unlikely while in a big calorie deficit (85 to 92.5 kg is realistic). Do not promise 100 kg.
 
 ## The app
@@ -33,28 +33,16 @@ Victor, a gym beginner (has only benched about 10 times) based in London. Uses a
 ## Training plan (already built into the app)
 
 - **Schedule (from Mon Oct 5):** Mon Upper A, Tue Lower A, Wed Upper B, Fri Upper C, Sat Lower B. Thu and Sun rest. Starter week unchanged: Thu Oct 1 rest, Fri Oct 2 Lower (old session with goblet squat), Sat Oct 3 Upper C with practice bench 3x8 @ 40 kg (`PLAN0`). Week 13 starts Mon Dec 28.
-- **Bench 3 times a week.** Mon heavy, Wed volume, Fri paused (moved from Sat when the new plan started). Every week goes up on every day (Victor asked for NO deload weeks). Only exception: Mon Dec 28 is light (3x2 @ 60) because the test is two days later. Bench numbers scale with the 1RM setting (base 70) and test attempts with the target setting (base 100): 92.5, 97.5, 100.
+- **Bench 3 times a week (`BENCH`, Victor's own table).** Mon: warm-ups, heavy single, then 3x3 back-off. Wed: warm-ups then 3x8 volume. Fri: warm-ups then 3x5 paused. Week 1 single 65 kg rising to 92.5 (week 11); week 12 is a benchmark single at 97.5. **1RM test is Mon 28 Dec 2026 (`TEST_KEY`)**: warm-ups to 97.5 x 1, then 100 x 1. No bench Wed 30 Dec. Numbers scale with the 1RM setting (base 70) and test with the target setting (base 100).
 - **Exercises (Victor's own plan, same every week, in `PLAN`):** Upper A: chest press, lat pulldown, seated row, pec deck, cable curl, triceps pushdown, cable crunch. Upper B: shoulder press machine, lat pulldown, seated row, dumbbell lateral raise, cable curl, pushdown, crunch. Upper C: lat pulldown, seated row, shoulder press, pec deck, cable curl, pushdown, crunch (fewer sets). Lower A and B: leg press, barbell Romanian deadlift, leg curl, leg extension, dumbbell calf raise, cable crunch. Rep ranges like 8–12.
 - **Weight progression:** each exercise in `EX` has a December target `T` for a consistent beginner (RDL 90, leg press 120, leg extension 50, cable crunch 80…). Weights climb fast early then taper, never stay the same more than 3 weeks, and always snap to real kit (dumbbells/barbells 2.5 kg, machines 5 kg, RDL jumps 5 kg). Logged weights ("lifted") rebase the rest of the plan.
 - **Cardio finisher after every session**, changing weekly (incline treadmill walk, Helix lateral trainer, air bike, skipping, stair master, kettlebell swings, recumbent bike, spin bike, skip and swing circuit, rower, boxing bag, elliptical). No curved treadmill. After leg day it is always an easy incline walk.
 - **20,000 steps every day** from Oct 1.
 - Gym equipment available: seated row, seated leg curl, leg extension, pec deck, chest press, seated shoulder press, seated lat pull, seated leg press, multi hip, cable stand, lat pulldown, dumbbells, Smith machine, bench press stand, kettlebells, skipping rope, plus the cardio machines above.
 
-## Diet (starts Mon Oct 5; steps start Oct 1)
+## Diet
 
-About 1,950 kcal and 173 g protein a day, same food daily, whole foods, no whey. Values were checked against Tesco and Sainsbury's labels.
-
-| Meal | Food | kcal | Protein |
-|---|---|---|---|
-| Breakfast | 250 g Fage Total 0% Greek yogurt + 30 g granola | 260 | 29 g |
-| Lunch: "Chicken and rice" | 200 g raw chicken breast (paprika, garlic powder), half a Tilda microwave jasmine pouch (125 g), 150 g frozen mixed veg, garlic yogurt sauce | 595 | 62 g |
-| Snack | Bagel (NYB, 85 g) + 3 slices ham (20 g) + 1 slice cheddar (25 g) | 395 | 28 g |
-| Dinner: "Pasta bolognese" | 175 g 5% beef mince, 60 g dry fusilli, passata, tomato purée, ready-chopped onion and carrot, garlic powder, parmesan | 605 | 53 g |
-| Fruit | Mixed fruit pot (~200 g) or an apple | 100 | 1 g |
-
-Victor's food preferences: real Greek yogurt (not "Greek style"), microwave jasmine rice, normal fusilli (not spaghetti, not wholewheat), garlic powder instead of fresh garlic, bottled lemon juice, ready-chopped onion and carrots, passata and tomato purée are fine. Meal prep Sunday (4 portions, freeze 1) and Wednesday (3 portions).
-
-Supplements already advised: vitamin D 10 micrograms daily (Oct to Mar), omega-3, optional multivitamin, optional creatine 3 to 5 g.
+The old meal plan was removed (2026-10). The daily checklist only has water (from Mon Oct 5), and every Food tab section (daily targets, prep, recipes, shopping list, adjusting) is empty. Victor will fill these in later.
 
 ## How to work on this repo
 
