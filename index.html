@@ -188,7 +188,7 @@ const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const fmt = d=>DN[d.getDay()]+' '+d.getDate()+' '+MN[d.getMonth()];
 const ALL = [];for(let d=new Date(START);d<=END;d=addDays(d,1))ALL.push(new Date(d));
-const TEST_KEY='2026-12-30';
+const TEST_KEY='2026-12-28';
 
 function dayType(d){
   if(key(d)===TEST_KEY) return 'T';
@@ -253,40 +253,40 @@ const FIRST={}, USED={}, ORDER=[];
 ALL.forEach(d=>{exercisesFor(d).forEach(([id])=>{const w=weekIdx(d);if(!(id in FIRST))FIRST[id]=w;(USED[id]=USED[id]||new Set()).add(w);if(w>0&&!ORDER.includes(id))ORDER.push(id);});});
 
 /* ---------- bench ---------- */
+// Bench plan, weights at a 70 kg 1RM (scaled by the 1RM setting). wu: warm-up [kg, reps].
+// A: Monday top single then back-off 3x3. B: Wednesday volume. C: Friday paused.
+const W1A=[[20,8],[30,5],[40,3]], W2=[[20,8],[30,5]], W3=[[20,8],[35,5]];
 const BENCH={
-  0:{C:[3,8,40]},
-  1:{A:[5,5,55],B:[4,8,47.5],C:[4,5,50]},
-  2:{A:[5,5,57.5],B:[4,8,50],C:[4,5,52.5]},
-  3:{A:[5,5,60],B:[4,8,52.5],C:[4,5,55]},
-  4:{A:[5,4,62.5],B:[4,8,55],C:[4,5,57.5]},
-  5:{A:[5,4,65],B:[4,6,57.5],C:[4,4,60]},
-  6:{A:[5,3,67.5],B:[4,6,60],C:[4,4,62.5]},
-  7:{A:[5,3,70],B:[4,6,62.5],C:[4,4,65]},
-  8:{A:[5,3,72.5],B:[4,5,65],C:[4,3,67.5]},
-  9:{A:[5,2,75],B:[4,5,67.5],C:[4,3,70]},
-  10:{A:[5,2,77.5],B:[4,4,70],C:[4,2,72.5]},
-  11:{A:[4,2,82.5],B:[4,3,72.5],C:[4,2,75]},
-  12:{A:[1,1,90],B:[3,3,75],C:[3,2,77.5]},
-  13:{A:[3,2,60]}
+  0:{C:{wu:null,sets:3,reps:8,kg:40}},
+  1:{A:{wu:[...W1A,[50,1]],top:65,sets:3,reps:3,kg:50},B:{wu:[...W2,[35,2]],sets:3,reps:8,kg:40},C:{wu:[...W2,[37.5,2]],sets:3,reps:5,kg:42.5}},
+  2:{A:{wu:[...W1A,[50,1]],top:67.5,sets:3,reps:3,kg:52.5},B:{wu:[...W2,[37.5,2]],sets:3,reps:8,kg:42.5},C:{wu:[...W2,[40,2]],sets:3,reps:5,kg:45}},
+  3:{A:{wu:[...W1A,[52.5,1]],top:70,sets:3,reps:3,kg:55},B:{wu:[...W2,[40,2]],sets:3,reps:8,kg:45},C:{wu:[...W2,[42.5,2]],sets:3,reps:5,kg:47.5}},
+  4:{A:{wu:[...W1A,[52.5,1]],top:72.5,sets:3,reps:3,kg:57.5},B:{wu:[...W2,[42.5,2]],sets:3,reps:8,kg:47.5},C:{wu:[...W2,[45,2]],sets:3,reps:5,kg:50}},
+  5:{A:{wu:[...W1A,[55,1]],top:75,sets:3,reps:3,kg:60},B:{wu:[...W2,[45,2]],sets:3,reps:8,kg:50},C:{wu:[...W2,[47.5,2]],sets:3,reps:5,kg:52.5}},
+  6:{A:{wu:[...W1A,[55,1]],top:77.5,sets:3,reps:3,kg:62.5},B:{wu:[...W2,[47.5,2]],sets:3,reps:8,kg:55},C:{wu:[...W2,[50,2]],sets:3,reps:5,kg:55}},
+  7:{A:{wu:[...W1A,[57.5,1]],top:80,sets:3,reps:3,kg:65},B:{wu:[...W2,[50,2]],sets:3,reps:8,kg:57.5},C:{wu:[...W2,[52.5,2]],sets:3,reps:5,kg:60}},
+  8:{A:{wu:[...W1A,[60,1]],top:82.5,sets:3,reps:3,kg:67.5},B:{wu:[...W3,[50,2]],sets:3,reps:8,kg:60},C:{wu:[...W2,[55,2]],sets:3,reps:5,kg:65}},
+  9:{A:{wu:[...W1A,[60,1]],top:85,sets:3,reps:3,kg:70},B:{wu:[...W3,[52.5,2]],sets:3,reps:8,kg:62.5},C:{wu:[...W3,[55,2]],sets:3,reps:5,kg:67.5}},
+  10:{A:{wu:[...W1A,[62.5,1]],top:87.5,sets:3,reps:3,kg:75},B:{wu:[...W3,[55,2]],sets:3,reps:8,kg:65},C:{wu:[...W3,[60,2]],sets:3,reps:5,kg:72.5}},
+  11:{A:{wu:[...W1A,[65,1]],top:92.5,sets:3,reps:3,kg:80},B:{wu:[...W3,[60,2]],sets:3,reps:8,kg:70},C:{wu:[[20,8],[40,5],[60,2]],sets:3,reps:5,kg:77.5}},
+  12:{A:{wu:[...W1A,[60,1],[70,1],[80,1],[90,1]],top:97.5,sets:3,reps:3,kg:85,bench:true},B:{wu:[...W3,[60,2]],sets:3,reps:8,kg:75},C:{wu:[[20,8],[40,5],[60,2],[70,1]],sets:3,reps:5,kg:80}}
 };
+// 1RM test, Mon 28 Dec, at a 100 kg target (scaled by the target setting)
+const TEST_WU=[[20,8],[40,5],[50,3],[60,2],[70,1],[80,1],[87.5,1],[92.5,1],[97.5,1]];
 const BREST={A:180,B:120,C:150};
 const r25 = x=>Math.round(x/2.5)*2.5;
 function benchFor(d){
   const t=dayType(d), w=weekIdx(d), s=S.settings;
   if(t==='T'){
     const f=s.target/100;
-    return {test:true,warm:[40,60,70,80,87.5].map(x=>Math.max(20,r25(x*f))),att:[.925,.975,1].map(x=>r25(x*s.target)),rest:240};
+    return {test:true,wu:TEST_WU.map(([kg,r])=>[Math.max(20,r25(kg*f)),r]),top:r25(s.target),rest:240};
   }
   const row=BENCH[w]&&BENCH[w][t]; if(!row) return null;
-  const scale=s.oneRM/70;
-  const b={sets:row[0],reps:row[1],kg:Math.max(20,r25(row[2]*scale)),rest:BREST[t],paused:t==='C'&&w>0,notes:[]};
-  if(w===0){b.notes.push('Practice day. Normal bench, no pause. Keep your shoulder blades pinned and lower the bar slowly to your lower chest.');b.rest=120;}
+  const sc=x=>Math.max(20,r25(x*s.oneRM/70));
+  const b={wu:row.wu?row.wu.map(([kg,r])=>[sc(kg),r]):null,top:row.top?sc(row.top):null,sets:row.sets,reps:row.reps,kg:sc(row.kg),rest:BREST[t],paused:t==='C'&&w>0,benchmark:!!row.bench,notes:[]};
+  if(w===0){b.wu=benchWarm(b.kg);b.notes.push('Practice day. Normal bench, no pause. Keep your shoulder blades pinned and lower the bar slowly to your lower chest.');b.rest=120;}
+  if(b.top)b.notes.push(b.benchmark?'Benchmark week. If '+b.top+' kg moves well, 100 is on for test day. Use the safety arms or a spotter.':'Heavy single: one rep only, then drop to the back-off sets. Use the safety arms or a spotter.');
   if(b.paused)b.notes.push('Pause each rep for 1 second, still, on your chest, then press.');
-  if(w===11&&t==='A')b.notes.push('If every double flies up, add a 5th set.');
-  if(w===12&&t==='A'){b.single=true;b.notes.push('Work up to one single at '+b.kg+' kg. If it moves smoothly, take one more single at '+r25(95*scale)+' kg. If '+r25(95*scale)+' goes up, 100 is on for test day.');}
-  if(w===8&&t==='A')b.notes.push('Checkpoint: this should feel solid with no missed reps.');
-  if(w===11&&t==='A')b.notes.push('Checkpoint: the doubles should move at a decent speed.');
-  if(w===13&&t==='A')b.notes.push('Light and fast. Save your energy for Wednesday.');
   return b;
 }
 const benchWarm = kg=>{const a=[[20,10]];const h=Math.max(20,r25(kg*.5)),t=Math.max(20,r25(kg*.75));if(h>20)a.push([h,5]);if(t>h)a.push([t,3]);return a;};
@@ -425,7 +425,7 @@ function planned(id,w,k){
 }
 
 /* ---------- tasks, time, calories ---------- */
-const MEALS=[['meal:b','Breakfast: Greek yogurt and granola'],['meal:l','Lunch: chicken and rice'],['meal:s','Snack: ham and cheese bagel'],['meal:f','Fruit: mixed fruit pot or an apple'],['meal:d','Dinner: pasta bolognese'],['water','Water: 3 to 4 litres']];
+const MEALS=[['water','Water: 3 to 4 litres']];
 function tasksFor(d){
   const t=dayType(d), a=[];
   if(t!=='R'){a.push('bench');exercisesFor(d).forEach(([id])=>a.push('ex:'+id));a.push('cardio');}
@@ -438,7 +438,7 @@ function dayPct(d){const a=tasksFor(d);return a.filter(x=>isDone(key(d),x)).leng
 function liftMinutes(d){
   const t=dayType(d); if(t==='R')return 0;
   let m=5; const b=isLeg(t)?null:benchFor(d);
-  if(b&&b.test)m+=5*3+3*4;else if(b)m+=b.sets*(0.75+b.rest/60);
+  if(b&&b.test)m+=b.wu.length*2.5+5;else if(b)m+=b.wu.length*1.5+(b.top?4:0)+b.sets*(0.75+b.rest/60);
   exercisesFor(d).forEach(([id,s])=>{m+=s*(0.75+EX[id].rest/60)+1;});
   return m;
 }
@@ -510,7 +510,7 @@ function viewToday(){
     // warm-up
     const b=isLeg(t)?null:benchFor(d);
     h+=`<div class="sec">Warm-up <small>about 5 min</small></div><div class="card"><ul class="plain">`;
-    if(b&&!b.test)h+=`<li>Bench warm-up: `+benchWarm(b.kg).map(([kg,r])=>kg+' kg × '+r).join(', ')+`</li>`;
+    if(b)h+=`<li>Bench warm-up sets are in the bench section below</li>`;
     if(isLeg(t)&&exercisesFor(d).length)h+=`<li>One light set of ${esc(EX[exercisesFor(d)[0][0]].n.toLowerCase())} to warm your hips and knees</li>`;
     h+=`</ul></div>`;
 
@@ -518,14 +518,17 @@ function viewToday(){
       const bd=isDone(k,'bench');
       h+=`<div class="sec">${b.test?'Bench press test':(b.paused?'Paused bench press':'Bench press')} <small>rest ${b.test?'3 to 5 min':restTxt(b.rest)}</small></div>`;
       h+=`<div class="bench" style="--c:${T.c}">`;
+      const chips=b.wu.map(([kg,r])=>`<span class="chip">${kgTxt(kg)} kg × ${r}</span>`).join('');
+      h+=`<p>Warm-up sets, resting about 1 to 2 minutes between each:</p><div class="chips">${chips}</div>`;
       if(b.test){
-        h+=`<p>Warm-up singles and sets, resting 2 to 3 minutes between each:</p><div class="chips">${b.warm.map((x,i)=>`<span class="chip">${x} kg × ${[5,3,1,1,1][i]}</span>`).join('')}</div>
-        <p style="margin-top:12px">Then your three attempts, resting 4 to 5 minutes between each:</p>
-        <div class="attempts">${b.att.map((x,i)=>`<div><b>${x}</b><span class="small muted">Attempt ${i+1}</span></div>`).join('')}</div>
-        <div class="note">Use the safety arms or a spotter. Only take attempt 3 if attempt 2 moved well; otherwise add 2.5 kg instead.</div>`;
+        h+=`<p style="margin-top:12px">Then your 1 rep max attempt, after 4 to 5 minutes' rest:</p>
+        <div class="top"><div class="kg">${kgTxt(b.top)}<small>kg</small></div><div class="sr">1 × 1</div></div>
+        <div class="note">Use the safety arms or a spotter. If 97.5 felt slow, take 97.5 or 100 based on how it moved.</div>`;
       }else{
-        h+=`<div class="top"><div class="kg">${kgTxt(b.kg)}<small>kg</small></div><div class="sr">${b.single?'Heavy single':b.sets+' × '+b.reps}</div></div>
-        <div class="meta">${b.single?'Work up in small jumps':b.sets+' sets of '+b.reps+' reps'}. Rest ${restTxt(b.rest)} between sets.</div>`;
+        if(b.top)h+=`<p style="margin-top:12px">${b.benchmark?'Benchmark':'Heavy'} single:</p><div class="top"><div class="kg">${kgTxt(b.top)}<small>kg</small></div><div class="sr">1 × 1</div></div><p style="margin-top:12px">Then back-off sets:</p>`;
+        else h+=`<p style="margin-top:12px">Work sets:</p>`;
+        h+=`<div class="top"><div class="kg">${kgTxt(b.kg)}<small>kg</small></div><div class="sr">${b.sets} × ${b.reps}</div></div>
+        <div class="meta">${b.sets} sets of ${b.reps} reps. Rest ${restTxt(b.rest)} between sets.</div>`;
         b.notes.forEach(n=>h+=`<div class="note">${esc(n)}</div>`);
       }
       h+=`<div class="row ${bd?'done':''}" style="border-top:1px solid var(--line);margin-top:12px"><input type="checkbox" class="tick" data-task="bench" ${bd?'checked':''} aria-label="Bench done"><div class="nm">Bench done</div><div></div></div></div>`;
@@ -557,7 +560,7 @@ function viewToday(){
   const sd=isDone(k,'steps');
   h+=`<div class="sec">Every day</div><div class="card">
   <div class="row ${sd?'done':''}"><input type="checkbox" class="tick" data-task="steps" ${sd?'checked':''} aria-label="20,000 steps done"><div><div class="nm">20,000 steps</div><div class="dt">About ${Math.round(900*bwf())} kcal burned</div></div><div></div></div>`;
-  if(dayDiff(d,W1)<0)h+=`<div class="row"><div></div><div><div class="nm">Diet and water start Monday 5 October</div><div class="dt">Use these first days to shop and do your first meal prep on Sunday</div></div><div></div></div>`;
+  if(dayDiff(d,W1)<0)h+=`<div class="row"><div></div><div><div class="nm">Water starts Monday 5 October</div><div class="dt">3 to 4 litres a day</div></div><div></div></div>`;
   else MEALS.forEach(([id,n])=>{const md=isDone(k,id);h+=`<div class="row ${md?'done':''}"><input type="checkbox" class="tick" data-task="${id}" ${md?'checked':''} aria-label="${esc(n)}"><div class="nm">${esc(n)}</div><div></div></div>`;});
   h+=`</div>`;
   return h;
@@ -577,7 +580,7 @@ function viewPlan(){
       const t=dayType(d),full=dayPct(d)===1;
       h+=`<button class="dchip ${t!=='R'?'gym':''} ${full?'full':''} ${key(d)===key(TODAY)?'today':''}" style="--c:${TYPES[t].c}" data-day="${key(d)}" aria-label="${fmt(d)}, ${TYPES[t].name}"><div class="dn">${DN[d.getDay()][0]}</div><div class="dd">${d.getDate()}</div><div class="dt">${t==='R'?'':isLeg(t)?'Leg':t==='T'?'Test':t}</div></button>`;
     }
-    h+=`</div><div class="wk-info">Cardio: ${esc(c[0])}${bA?'. Heavy bench: '+(w===12?'single at '+r25(90*S.settings.oneRM/70):bA[0]+'×'+bA[1]+' at '+r25(bA[2]*S.settings.oneRM/70))+' kg':''}</div></div>`;
+    h+=`</div><div class="wk-info">Cardio: ${esc(c[0])}${bA?'. Heavy single: '+r25(bA.top*S.settings.oneRM/70)+' kg':w===13?'. Bench test Mon 28 Dec':''}</div></div>`;
   });
   h+=`<h2>Rules</h2><div class="card"><ul class="plain">
   <li>Complete every bench rep, then move on to next week's numbers.</li>
@@ -591,20 +594,21 @@ function viewPlan(){
 function viewWeights(){
   const s=S.settings; let h=`<h2 style="margin-top:6px">Your numbers</h2><p class="muted">Change these and the whole plan updates.</p><div class="card">
   <div class="field"><label for="f1">Current bench 1 rep max<span class="hint">Your best single, in kg</span></label><input id="f1" type="number" inputmode="decimal" step="2.5" data-set="oneRM" value="${s.oneRM}"></div>
-  <div class="field"><label for="f2">Test day target<span class="hint">Your goal on 30 Dec</span></label><input id="f2" type="number" inputmode="decimal" step="2.5" data-set="target" value="${s.target}"></div>
+  <div class="field"><label for="f2">Test day target<span class="hint">Your goal on Mon 28 Dec</span></label><input id="f2" type="number" inputmode="decimal" step="2.5" data-set="target" value="${s.target}"></div>
   <div class="field"><label for="f3">Bodyweight<span class="hint">Used for calorie estimates</span></label><input id="f3" type="number" inputmode="decimal" step="0.5" data-set="bw" value="${s.bw}"></div></div>`;
 
   h+=`<h2>Bench plan</h2><div class="scroll"><table class="bt"><thead><tr><th>Week of</th><th class="num">Mon heavy</th><th class="num">Wed volume</th><th class="num">Fri paused</th></tr></thead><tbody>`;
-  const sc=s.oneRM/70;
+  const sc1=s.oneRM/70;
   for(let w=0;w<=13;w++){
-    const r=BENCH[w]; const mon=w===0?new Date(2026,9,3):addDays(W1,(w-1)*7);
-    const cell=x=>x?(x[0]===1&&x[1]===1?'Single '+r25(x[2]*sc):x[0]+'×'+x[1]+' @ '+r25(x[2]*sc)):'';
-    let B=cell(r.B), C=cell(r.C);
-    if(w===13)B='<b>Test</b>';
-    if(w===0)C=cell(r.C)+' (Sat practice)';
-    h+=`<tr><td>${mon.getDate()} ${MN[mon.getMonth()]}</td><td class="num">${cell(r.A)}</td><td class="num">${B}</td><td class="num">${C}</td></tr>`;
+    const r=BENCH[w]||{}; const mon=w===0?new Date(2026,9,3):addDays(W1,(w-1)*7);
+    const sc=x=>Math.max(20,r25(x*sc1)), sets=x=>x.sets+'×'+x.reps+' @ '+sc(x.kg);
+    let A=r.A?sc(r.A.top)+'×1, then '+sets(r.A):'', B=r.B?sets(r.B):'', C=r.C?sets(r.C):'';
+    if(w===12)A='<b>Benchmark</b> '+A;
+    if(w===13)A='<b>Test</b> '+r25(s.target)+'×1';
+    if(w===0)C+=' (Sat practice)';
+    h+=`<tr><td>${mon.getDate()} ${MN[mon.getMonth()]}</td><td class="num">${A}</td><td class="num">${B}</td><td class="num">${C}</td></tr>`;
   }
-  h+=`</tbody></table></div><p class="small muted" style="margin-top:8px">Weights in kg. Test day attempts: ${[.925,.975,1].map(x=>r25(x*s.target)).join(', ')} kg.</p>`;
+  h+=`</tbody></table></div><p class="small muted" style="margin-top:8px">Weights in kg. Mon: heavy single, then 3 back-off sets of 3. Full warm-up sets are on each day's page. Test on Mon 28 Dec: ${r25(s.target)} kg.</p>`;
 
   h+=`<h2>Exercise sheet</h2><p class="muted">Enter the weight you can do for the listed reps with 1 to 2 left in the tank. The sheet fills in the rest. Dumbbell weights are per dumbbell.</p>
   <div class="scroll"><table class="sheet"><thead><tr><th>Exercise and start weight</th>`;
@@ -630,91 +634,9 @@ function viewWeights(){
   return h;
 }
 
-function recipeCard(title,sub,macros,ings,steps,tip){
-  let h=`<div class="card"><h3>${title}</h3><p class="small muted">${sub}</p><div class="chips">${macros.map(m=>`<span class="chip">${m}</span>`).join('')}</div>
-  <p style="margin:12px 0 2px"><b>Ingredients</b></p><ul class="plain">${ings.map(i=>`<li>${i}</li>`).join('')}</ul>
-  <p style="margin:12px 0 2px"><b>Method</b></p><ol>${steps.map(s=>`<li>${s}</li>`).join('')}</ol>`;
-  if(tip)h+=`<div class="note">${tip}</div>`;
-  return h+`</div>`;
-}
 function viewFood(){
-  let h=`<h2 style="margin-top:6px">Daily targets</h2><div class="facts"><div class="fact"><b>≈1,950</b><span>kcal a day</span></div><div class="fact"><b>≈170 g</b><span>protein a day</span></div><div class="fact"><b>3 to 4 L</b><span>water a day</span></div></div>
-  <p class="small muted" style="margin-top:8px">Whole foods only, same every day. Numbers use UK supermarket labels (Tesco, Sainsbury's) for the products named in each recipe. One heaped tablespoon of Greek yogurt is about 20 g.</p>
-  <div class="scroll"><table><thead><tr><th>Meal</th><th class="num">kcal</th><th class="num">Protein</th></tr></thead><tbody>
-  <tr><td>Breakfast: Greek yogurt and granola</td><td class="num">260</td><td class="num">29 g</td></tr>
-  <tr><td>Lunch: chicken and rice</td><td class="num">595</td><td class="num">62 g</td></tr>
-  <tr><td>Snack: ham and cheese bagel</td><td class="num">395</td><td class="num">28 g</td></tr>
-  <tr><td>Dinner: pasta bolognese</td><td class="num">605</td><td class="num">53 g</td></tr>
-  <tr><td>Fruit: mixed fruit pot (about 200 g) or an apple</td><td class="num">100</td><td class="num">1 g</td></tr>
-  <tr><td><b>Total</b></td><td class="num"><b>≈1,950</b></td><td class="num"><b>≈173 g</b></td></tr></tbody></table></div>`;
-
-  h+=`<h2>Prep day, step by step</h2><p class="muted">Sunday: 4 portions of each, fridge 3 and freeze 1. Wednesday: 3 portions of each for Thursday to Saturday. Move the frozen tubs to the fridge the night before. About 50 minutes in total, in this order:</p><div class="card"><ol>
-  <li>Turn the oven on to 200°C (180°C fan) and line a tray with baking paper.</li>
-  <li>Put the big pan on for the bolognese and cook the onion and carrots (bolognese steps 1 and 2).</li>
-  <li>While they soften, season the chicken and lay it on the tray (lunch steps 2 to 4).</li>
-  <li>Chicken into the oven. Set a timer for 20 minutes.</li>
-  <li>Back to the pan: mince, then purée and garlic powder, then passata and herbs (bolognese steps 3 to 5).</li>
-  <li>Turn the bolognese down to simmer for 30 minutes.</li>
-  <li>When the timer goes, check the chicken is cooked, rest it, slice it and tub it.</li>
-  <li>When the bolognese is thick, taste it, then tub it.</li>
-  <li>Cool everything for up to an hour, then fridge and freezer. Done.</li></ol></div>`;
-
-  h+=`<h2>Recipes</h2>`;
-  h+=recipeCard('Breakfast: Greek yogurt and granola','1 portion, 2 minutes',['260 kcal','29 g protein'],
-   ['250 g 0% fat Greek yogurt, such as Fage Total 0% (about 12 heaped tablespoons)','30 g granola, such as Sainsbury\'s honey granola (about 3 tablespoons)','Optional: a drizzle of honey (adds about 20 kcal per teaspoon)'],
-   ['Spoon the yogurt into a bowl. The first time, weigh it on a kitchen scale so you learn what 250 g looks like.','Scatter the granola on top just before eating so it stays crunchy.'],
-   'Buy real Greek yogurt with about 10 g protein per 100 g, like Fage Total 0%. Cheaper "Greek style" yogurts can have as little as 6 g, which would cut about 10 g of protein from your day.');
-  h+=recipeCard('Lunch: chicken and rice','Chicken is cooked on prep day; rice, veg and sauce take about 5 minutes each day',['595 kcal','62 g protein'],
-   ['<b>Prep day, Sunday (makes 4):</b> 800 g chicken breast, 1 tsp olive oil, 2 tsp smoked paprika, 1 tsp garlic powder, ½ tsp salt, ½ tsp black pepper',
-    '<b>Prep day, Wednesday (makes 3):</b> 600 g chicken breast, ¾ tsp olive oil, 1½ tsp smoked paprika, ¾ tsp garlic powder, a pinch under ½ tsp salt, a pinch under ½ tsp pepper',
-    '<b>Each day, rice:</b> half a microwave jasmine rice pouch (125 g), such as Tilda Fragrant Jasmine',
-    '<b>Each day, veg:</b> 150 g frozen mixed veg',
-    '<b>Each day, sauce:</b> 100 g 0% Greek yogurt (about 5 heaped tbsp), ¼ tsp garlic powder, a squeeze of bottled lemon juice, a pinch of salt, a pinch of dried mint or dill'],
-   ['<b>Prep day.</b> Heat the oven to 200°C (180°C fan). Line a baking tray with baking paper.',
-    'Pat the chicken dry with kitchen paper so the seasoning sticks. Lay it on the tray.',
-    'Rub the olive oil over both sides of the chicken.',
-    'Mix the paprika, garlic powder, salt and pepper in a small bowl, then sprinkle it evenly over both sides.',
-    'Bake for 20 to 22 minutes, until there is no pink in the thickest part (75°C inside if you have a thermometer).',
-    'Rest for 5 minutes, then slice and split evenly into tubs.',
-    'Let the tubs cool for up to an hour, then put them in the fridge. On Sunday, freeze the 4th tub.',
-    '<b>Each day.</b> Make the sauce first so the garlic flavour has a few minutes to develop: stir the garlic powder, lemon juice, salt and herbs into the yogurt.',
-    'Microwave the frozen veg in a covered bowl for 3 to 4 minutes, stirring halfway.',
-    'Microwave a chicken tub for about 2 minutes until piping hot all the way through.',
-    'Squeeze the rice pouch to break up the grains, tear the top 2 cm, and microwave for 2 minutes (800 W).',
-    'Tip half the rice onto your plate. Fold the pouch shut, clip it, and put the other half in the fridge for tomorrow.',
-    'Add the veg and chicken, and spoon the sauce over.'],
-   'An opened pouch keeps in the fridge for up to 2 days, so tomorrow\'s lunch uses the other half. Reheat it until piping hot.');
-  h+=recipeCard('Snack: ham and cheese bagel','1 portion, 5 minutes',['395 kcal','28 g protein'],
-   ['1 plain bagel, such as New York Bakery Co (85 g)','3 slices of ham, such as Tesco British Cooked Ham (20 g slices)','1 slice of cheddar, such as Tesco 10-slice packs (25 g slices)','Optional: sliced tomato, cucumber or a little mustard (almost no calories)'],
-   ['Slice the bagel in half and toast it.','Put the cheddar on the bottom half while the bagel is hot so it softens.','Layer the ham and any salad on top, then close it up.'],
-   'For a melt, put the open bagel with the cheese and ham under the grill for 2 minutes.');
-  h+=recipeCard('Dinner: pasta bolognese','Sauce is cooked on prep day; pasta is made fresh each day',['605 kcal','53 g protein'],
-   ['<b>Prep day, Sunday (makes 4):</b> 700 g 5% fat beef mince, 1 tsp olive oil, 150 g chopped onion, 250 g diced carrots, 1 tsp garlic powder, 3 tbsp tomato purée, 800 g passata, 1½ tsp dried oregano, 1½ tsp dried basil, ½ tsp salt, ½ tsp black pepper',
-    '<b>Prep day, Wednesday (makes 3):</b> 525 g 5% fat beef mince, 1 tsp olive oil, 110 g chopped onion, 160 g diced carrots, ¾ tsp garlic powder, 2 tbsp tomato purée, 600 g passata, 1 tsp dried oregano, 1 tsp dried basil, a pinch under ½ tsp salt and pepper',
-    '<b>Each day:</b> 60 g dry fusilli pasta, 2 tbsp finely grated parmesan (about 10 g)'],
-   ['<b>Prep day.</b> Put a large, deep pan on a medium heat and add the olive oil. Wait 1 minute for it to warm.',
-    'Add the onion and carrots. Cook for 6 to 7 minutes, stirring often, until soft. Frozen onion goes straight in; give it 2 extra minutes.',
-    'Turn the heat up to high. Add the mince and break it up with a wooden spoon. Cook for 6 to 8 minutes until browned all over with no pink left.',
-    'Stir in the tomato purée and garlic powder and cook for 1 to 2 minutes. This deepens the flavour. Adding garlic powder here rather than earlier stops it burning.',
-    'Pour in the passata. Add the oregano, basil, salt and pepper, and stir well.',
-    'Bring it to a bubble, then turn to the lowest heat. Simmer uncovered for 30 minutes (40 is even better), stirring every 5 to 10 minutes. Add a splash of water if it gets too thick.',
-    'Taste and add a little more salt if it needs it.',
-    'Split evenly into tubs. Cool for up to an hour, then fridge. On Sunday, freeze the 4th tub.',
-    '<b>Each day.</b> Boil a pan of water with a pinch of salt.',
-    'Add the fusilli and stir for the first minute so it does not stick. Cook for the time on the pack, usually 10 to 12 minutes.',
-    'While it cooks, microwave a sauce tub for 2 to 3 minutes, stirring halfway, until piping hot.',
-    'Drain the pasta, stir it into the sauce and sprinkle over the parmesan.'],
-   'The longer the sauce simmers, the more it tastes like proper bolognese.');
-  h+=`<div class="card"><h3>Fruit: once a day</h3><p class="small muted">Any time, 0 minutes</p><div class="chips"><span class="chip">≈100 kcal</span><span class="chip">2 to 4 g fibre</span></div><p style="margin-top:10px">One mixed fruit pot (about 200 g of mango, pineapple and melon, or apple and grape), or one apple. It fits well after lunch or with your bagel. An apple eaten with the skin has the most fibre.</p></div>`;
-  h+=`<h2>Weekly shopping list</h2><p class="muted">Enough for all 7 days.</p><div class="card">
-  <p><b>Chilled</b></p><ul class="plain"><li>0% fat Greek yogurt with about 10 g protein per 100 g, 2.5 kg</li><li>Chicken breast, 1.4 kg</li><li>5% fat beef mince, 1.25 kg</li><li>Ham, 21 slices (about 3 packs)</li><li>Cheddar slices, 1 pack (7 needed)</li><li>Parmesan, 1 small block (about 70 g used)</li></ul>
-  <p style="margin-top:10px"><b>Fresh or ready-prepped</b></p><ul class="plain"><li>Ready-chopped onion, about 300 g (fresh diced or a frozen bag)</li><li>Ready-diced carrots, about 450 g (fresh or frozen)</li><li>Lemon juice, 1 bottle</li><li>Mixed fruit pots, 7 (mango, pineapple and melon, or apple and grape), or 7 apples</li></ul>
-  <p style="margin-top:10px"><b>Frozen</b></p><ul class="plain"><li>Mixed veg, 1 kg bag</li></ul>
-  <p style="margin-top:10px"><b>Cupboard</b></p><ul class="plain"><li>Granola, 1 bag (lasts about 2 weeks)</li><li>Microwave jasmine rice, 4 pouches (half a pouch per lunch)</li><li>Fusilli pasta, 500 g pack</li><li>Passata, 1.4 kg (for example 3 × 500 g cartons)</li><li>Tomato purée, 1 tube</li><li>Bagels, 7 (about 2 packs)</li></ul>
-  <p style="margin-top:10px"><b>Buy once</b></p><ul class="plain"><li>Olive oil, smoked paprika, garlic powder, dried oregano, dried basil, dried mint or dill, salt, black pepper</li><li>Food tubs with lids, and a kitchen scale (about £10)</li></ul></div>`;
-
-  h+=`<h2>Adjusting</h2><div class="card"><ul class="plain"><li>Use your weekly average from the Weigh-in tab, not single days.</li><li>If your bench stalls for 2 weeks, or you lose more than 1 kg a week after the first 2 weeks, add a quarter of a rice pouch more and a second slice of cheese to the bagel.</li><li>Most of your fat loss comes from this diet and your 20k steps. The cardio finishers add about 150 to 220 kcal on top.</li></ul></div>`;
-  return h;
+  const empty='<div class="card"><p class="muted">Nothing here yet.</p></div>';
+  return `<h2 style="margin-top:6px">Daily targets</h2>${empty}<h2>Prep day, step by step</h2>${empty}<h2>Recipes</h2>${empty}<h2>Weekly shopping list</h2>${empty}<h2>Adjusting</h2>${empty}`;
 }
 
 function weightChart(){
