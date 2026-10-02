@@ -239,13 +239,13 @@ const PLAN0={
   L:[['goblet',3,10],['bbrdl',3,10],['legpress',3,10],['legcurl',3,12],['legext',3,12],['crunch',3,15]],
   C:[['pecdeck',3,12],['latpd',3,12],['shpress',3,12],['pushdown',3,12],['crunch',3,15]]
 };
-// from Mon 5 Oct: [exercise, sets, rep range]
+// from Mon 5 Oct: [exercise, sets, reps]. Lower A is the heavier leg day, Lower B the higher-rep one.
 const PLAN={
-  A:[['chestpress',3,'8–12'],['latpd',3,'8–12'],['rowmach',3,'8–12'],['inclinedb',2,'12–15'],['cablecurl',3,'10–15'],['pushdown',3,'10–15'],['crunch',3,'10–15']],
-  L:[['legpress',4,'8–12'],['bbrdl',3,'8–10'],['legcurl',4,'10–15'],['legext',3,'10–15'],['dbcalf',3,'10–15'],['crunch',3,'10–15']],
-  B:[['shpress',3,'8–12'],['latpd',3,'8–12'],['rowmach',3,'8–12'],['dblat',3,'12–15'],['cablecurl',3,'10–15'],['pushdown',3,'10–15'],['crunch',3,'10–15']],
-  C:[['latpd',3,'8–12'],['rowmach',3,'8–12'],['shpress',2,'10–12'],['inclinedb',2,'12–15'],['cablecurl',2,'10–15'],['pushdown',2,'10–15'],['crunch',3,'10–15']],
-  N:[['legpress',4,'10–12'],['bbrdl',3,'8–10'],['legcurl',4,'8–12'],['legext',3,'12–15'],['dbcalf',3,'10–15'],['crunch',3,'10–15']]
+  A:[['chestpress',3,10],['latpd',3,10],['rowmach',3,10],['inclinedb',2,12],['cablecurl',3,12],['pushdown',3,12],['crunch',3,15]],
+  L:[['legpress',4,10],['bbrdl',3,8],['legcurl',4,12],['legext',3,12],['dbcalf',3,15],['crunch',3,15]],
+  B:[['shpress',3,10],['latpd',3,10],['rowmach',3,10],['dblat',3,15],['cablecurl',3,12],['pushdown',3,12],['crunch',3,15]],
+  C:[['latpd',3,10],['rowmach',3,10],['shpress',2,12],['inclinedb',2,12],['cablecurl',2,12],['pushdown',2,12],['crunch',3,15]],
+  N:[['legpress',4,12],['bbrdl',3,10],['legcurl',4,10],['legext',3,15],['dbcalf',3,15],['crunch',3,15]]
 };
 const exercisesFor = d=>(weekIdx(d)===0?PLAN0:PLAN)[dayType(d)]||[];
 
@@ -537,13 +537,13 @@ function viewToday(){
 
     const exs=exercisesFor(d);
     if(exs.length){
-      h+=`<div class="sec">Exercises <small>stop 1 to 2 reps before failure</small></div><div class="card">`;
+      h+=`<div class="sec">Exercises</div><div class="card">`;
       exs.forEach(([id,s,r])=>{
         const e=EX[id], p=planned(id,w,k), last=lastLog(id,k), lg=logOf(k,id), dn=isDone(k,'ex:'+id);
         const ld=last?parseKey(last.k):null;
         h+=`<div class="row ${dn?'done':''}"><input type="checkbox" class="tick" data-task="ex:${id}" ${dn?'checked':''} aria-label="${esc(e.n)} done">
         <div><div class="nm">${esc(e.n)}<span class="tag">${KIND[e.k]}</span></div><div class="dt">${s} × ${r}, rest ${restTxt(e.rest)}${e.k==='D'?', weight per dumbbell':''}</div>
-        ${p===null?'<div class="dt">First time: pick a weight you can lift for every rep with 1 to 2 left, then enter it.</div>':''}</div>
+        ${p===null?'<div class="dt">First time: pick a weight you can lift for every rep with good form, then enter it.</div>':''}</div>
         <div class="wt">${p!==null?`<div class="p">${kgTxt(p)}<small> kg</small></div>`:`<div class="first">First time</div>`}
         <label class="log">${p!==null?'lifted':'start'} <input type="number" inputmode="decimal" step="${STEP[e.k]}" data-log="${id}" value="${lg!==null?kgTxt(lg):''}" placeholder="${p!==null?kgTxt(p):'kg'}" aria-label="Weight lifted for ${esc(e.n)}"></label>
         ${last?`<div class="last">Last: ${kgTxt(last.kg)} kg, ${ld.getDate()} ${MN[ld.getMonth()]}</div>`:''}</div></div>`;
@@ -587,7 +587,7 @@ function viewPlan(){
   <li>Complete every bench rep, then move on to next week's numbers.</li>
   <li>Miss reps and you repeat that week. Miss the same week twice, drop 5 kg and build back up.</li>
   <li>On everything else, when you hit the top reps on every set, go up next session.</li>
-  <li>Use the rep range: when you hit the top of the range on every set, the weight goes up.</li>
+  <li>Hit every rep on every set and the weight goes up as planned. Miss reps and stay at that weight.</li>
   <li>Bench rest: 3 min heavy, 2 min volume, 2.5 min paused. Other lifts: 90s for big moves, 60s for small ones.</li></ul></div>`;
   return h;
 }
@@ -611,7 +611,7 @@ function viewWeights(){
   }
   h+=`</tbody></table></div><p class="small muted" style="margin-top:8px">Weights in kg. Mon: heavy single, then 3 back-off sets of 3. Full warm-up sets are on each day's page. Test on Mon 28 Dec: ${r25(s.target)} kg.</p>`;
 
-  h+=`<h2>Exercise sheet</h2><p class="muted">Enter the weight you can do for the listed reps with 1 to 2 left in the tank. The sheet fills in the rest. Dumbbell weights are per dumbbell.</p>
+  h+=`<h2>Exercise sheet</h2><p class="muted">Enter the weight you can do for the listed reps with good form. The sheet fills in the rest. Dumbbell weights are per dumbbell.</p>
   <div class="scroll"><table class="sheet"><thead><tr><th>Exercise and start weight</th>`;
   for(let w=0;w<=13;w++){const mon=w===0?START:addDays(W1,(w-1)*7);h+=`<th class="num">${mon.getDate()} ${MN[mon.getMonth()]}</th>`;}
   h+=`</tr></thead><tbody>`;
