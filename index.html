@@ -204,35 +204,39 @@ const TYPES={
 };
 
 /* ---------- exercises ---------- */
-// kind: M machine/cable, D dumbbell (weight per dumbbell), B barbell. inc kg added every `every` weeks.
+// kind: M machine/cable, D dumbbell (weight per dumbbell), B barbell.
+// g: realistic total gain for a beginner over the 12 weeks (0.5 = 50% heavier by the end), while eating in a deficit.
 // Steps match real gym kit: dumbbells come in 2.5 kg jumps, barbells load in 2.5 kg steps, machine stacks move in 5 kg plates.
 const EX={
-  latpd:{n:'Lat pulldown (wide grip)',k:'M',rest:90,inc:5,every:2},
-  rowmach:{n:'Seated row machine',k:'M',rest:90,inc:5,every:2},
-  dbrow:{n:'Single-arm dumbbell row',k:'D',rest:90,inc:2.5,every:1},
-  bbrow:{n:'Barbell bent-over row',k:'B',rest:90,inc:2.5,every:1},
-  shpress:{n:'Seated shoulder press (machine)',k:'M',rest:90,inc:5,every:2},
-  dbshp:{n:'Seated dumbbell shoulder press',k:'D',rest:90,inc:2.5,every:2},
-  cablecurl:{n:'Cable biceps curl',k:'M',rest:60,inc:5,every:3},
-  dbhammer:{n:'Dumbbell hammer curl',k:'D',rest:60,inc:2.5,every:3},
-  dbcurl:{n:'Dumbbell curl',k:'D',rest:60,inc:2.5,every:3},
-  bbcurl:{n:'Barbell curl',k:'B',rest:60,inc:2.5,every:2},
-  crunch:{n:'Cable crunch',k:'M',rest:60,inc:5,every:2},
-  latpull:{n:'Seated lat pull machine',k:'M',rest:90,inc:5,every:2},
-  cablerow:{n:'Seated cable row',k:'M',rest:90,inc:5,every:2},
-  pushdown:{n:'Cable triceps pushdown',k:'M',rest:60,inc:5,every:2},
-  dbohe:{n:'Dumbbell overhead triceps extension',k:'D',rest:60,inc:2.5,every:3},
-  goblet:{n:'Goblet squat',k:'D',rest:90,inc:2.5,every:1},
-  bss:{n:'Dumbbell Bulgarian split squat',k:'D',rest:90,inc:2.5,every:2},
-  bbrdl:{n:'Barbell Romanian deadlift',k:'B',rest:90,inc:5,every:1},
-  legpress:{n:'Seated leg press',k:'M',rest:90,inc:10,every:1},
-  legcurl:{n:'Seated leg curl',k:'M',rest:60,inc:5,every:2},
-  legext:{n:'Leg extension',k:'M',rest:60,inc:5,every:2},
-  pecdeck:{n:'Pec deck',k:'M',rest:60,inc:5,every:2},
-  dbfly:{n:'Dumbbell fly',k:'D',rest:60,inc:2.5,every:3},
-  cgbench:{n:'Close-grip bench press',k:'B',rest:90,inc:2.5,every:1}
+    latpd:{n:'Lat pulldown (wide grip)',k:'M',rest:90,g:0.3},
+    rowmach:{n:'Seated row machine',k:'M',rest:90,g:0.3},
+    dbrow:{n:'Single-arm dumbbell row',k:'D',rest:90,g:0.3},
+    bbrow:{n:'Barbell bent-over row',k:'B',rest:90,g:0.25},
+    shpress:{n:'Seated shoulder press (machine)',k:'M',rest:90,g:0.3},
+    dbshp:{n:'Seated dumbbell shoulder press',k:'D',rest:90,g:0.25},
+    cablecurl:{n:'Cable biceps curl',k:'M',rest:60,g:0.25},
+    dbhammer:{n:'Dumbbell hammer curl',k:'D',rest:60,g:0.25},
+    dbcurl:{n:'Dumbbell curl',k:'D',rest:60,g:0.25},
+    bbcurl:{n:'Barbell curl',k:'B',rest:60,g:0.2},
+    crunch:{n:'Cable crunch',k:'M',rest:60,g:0.3},
+    latpull:{n:'Seated lat pull machine',k:'M',rest:90,g:0.3},
+    cablerow:{n:'Seated cable row',k:'M',rest:90,g:0.3},
+    pushdown:{n:'Cable triceps pushdown',k:'M',rest:60,g:0.25},
+    dbohe:{n:'Dumbbell overhead triceps extension',k:'D',rest:60,g:0.25},
+    goblet:{n:'Goblet squat',k:'D',rest:90,g:0.4},
+    bss:{n:'Dumbbell Bulgarian split squat',k:'D',rest:90,g:0.2},
+    bbrdl:{n:'Barbell Romanian deadlift',k:'B',rest:90,g:0.5},
+    legpress:{n:'Seated leg press',k:'M',rest:90,g:0.5},
+    legcurl:{n:'Seated leg curl',k:'M',rest:60,g:0.3},
+    legext:{n:'Leg extension',k:'M',rest:60,g:0.3},
+    pecdeck:{n:'Pec deck',k:'M',rest:60,g:0.25},
+    dbfly:{n:'Dumbbell fly',k:'D',rest:60,g:0.2},
+    cgbench:{n:'Close-grip bench press',k:'B',rest:90,g:0.2}
 };
 const KIND={M:'Machine',D:'Dumbbell',B:'Barbell'};
+// smallest real jump: dumbbells and barbells 2.5 kg, machine stacks 5 kg
+const STEP={M:5,D:2.5,B:2.5};
+const snap=(id,kg)=>{const st=STEP[EX[id].k];return Math.max(st,Math.round(kg/st)*st);};
 const PLAN={
   A:{oct:[['latpd',3,10],['rowmach',3,10],['shpress',3,10],['cablecurl',3,12],['crunch',3,15]],
      nov:[['latpd',3,10],['bbrow',3,10],['shpress',3,10],['dbhammer',3,12],['crunch',3,15]],
@@ -401,14 +405,14 @@ const startOf=id=>{let v=num(S.start[id]);if(v===null&&ALIAS[id])v=num(S.start[A
 const logOf=(k,id)=>{const l=S.days[k]&&S.days[k].log;if(!l)return null;let v=num(l[id]);if(v===null&&ALIAS[id])v=num(l[ALIAS[id]]);return v;};
 // the most recent weight actually lifted before day key k
 function lastLog(id,k){let best=null;for(const dk in S.days){if(dk<k){const v=logOf(dk,id);if(v!==null&&(!best||dk>best.k))best={k:dk,kg:v};}}return best;}
-// how many planned increases fall after week a, up to and including week w
-function steps(id,a,w){const e=EX[id],f=Math.max(FIRST[id],1),g=x=>x<=f?0:Math.floor((x-f)/e.every);return g(w)-g(a);}
+// beginner gains come quickly in the first weeks, then slow down: reaches 1+g after 12 weeks of training
+function curve(id,w){const n=Math.max(0,w-Math.max(FIRST[id],1));return 1+EX[id].g*(1-Math.exp(-n/6))/(1-Math.exp(-2));}
 // weight to use in week w: builds on the last weight lifted (before day key k), or on the start weight
 function planned(id,w,k){
-  const e=EX[id], L=lastLog(id,k);
-  if(L)return Math.round((L.kg+e.inc*steps(id,weekIdx(parseKey(L.k)),w))*10)/10;
+  const L=lastLog(id,k);
+  if(L)return snap(id,snap(id,L.kg)*curve(id,w)/curve(id,weekIdx(parseKey(L.k))));
   const st=startOf(id); if(st===null)return null;
-  return Math.round((st+e.inc*steps(id,FIRST[id],w))*10)/10;
+  return snap(id,snap(id,st)*curve(id,w)/curve(id,FIRST[id]));
 }
 
 /* ---------- tasks, time, calories ---------- */
@@ -489,6 +493,10 @@ function viewToday(){
     h+=`<div class="facts"><div class="fact"><b>20,000</b><span>step goal</span></div><div class="fact"><b>≈${stepK}</b><span>kcal from steps</span></div><div class="fact"><b>7 to 9 h</b><span>sleep</span></div></div>`;
   }
 
+  // first thing in the morning
+  const wv=(S.days[k]&&S.days[k].weight)||'';
+  h+=`<div class="sec">Morning</div><div class="card"><div class="row"><div></div><div><div class="nm">Morning bodyweight</div><div class="dt">When you wake up, before food, after the toilet</div></div><div class="wt"><input type="number" inputmode="decimal" step="0.1" data-bw="1" value="${esc(wv)}" placeholder="kg" aria-label="Morning bodyweight in kg"></div></div></div>`;
+
   if(t!=='R'){
     // warm-up
     const b=t==='L'?null:benchFor(d);
@@ -524,7 +532,7 @@ function viewToday(){
         <div><div class="nm">${esc(e.n)}<span class="tag">${KIND[e.k]}</span></div><div class="dt">${s} × ${r}${id==='bss'?' each leg':''}, rest ${restTxt(e.rest)}${e.k==='D'?', weight per dumbbell':''}</div>
         ${p===null?'<div class="dt">First time: pick a weight you can lift for every rep with 1 to 2 left, then enter it.</div>':''}</div>
         <div class="wt">${p!==null?`<div class="p">${kgTxt(p)}<small> kg</small></div>`:`<div class="first">First time</div>`}
-        <label class="log">${p!==null?'lifted':'start'} <input type="number" inputmode="decimal" step="0.5" data-log="${id}" value="${lg!==null?kgTxt(lg):''}" placeholder="${p!==null?kgTxt(p):'kg'}" aria-label="Weight lifted for ${esc(e.n)}"></label>
+        <label class="log">${p!==null?'lifted':'start'} <input type="number" inputmode="decimal" step="${STEP[e.k]}" data-log="${id}" value="${lg!==null?kgTxt(lg):''}" placeholder="${p!==null?kgTxt(p):'kg'}" aria-label="Weight lifted for ${esc(e.n)}"></label>
         ${last?`<div class="last">Last: ${kgTxt(last.kg)} kg, ${ld.getDate()} ${MN[ld.getMonth()]}</div>`:''}</div></div>`;
       });
       h+=`</div>`;
@@ -542,8 +550,7 @@ function viewToday(){
   <div class="row ${sd?'done':''}"><input type="checkbox" class="tick" data-task="steps" ${sd?'checked':''} aria-label="20,000 steps done"><div><div class="nm">20,000 steps</div><div class="dt">About ${Math.round(900*bwf())} kcal burned</div></div><div></div></div>`;
   if(dayDiff(d,W1)<0)h+=`<div class="row"><div></div><div><div class="nm">Diet and water start Monday 5 October</div><div class="dt">Use these first days to shop and do your first meal prep on Sunday</div></div><div></div></div>`;
   else MEALS.forEach(([id,n])=>{const md=isDone(k,id);h+=`<div class="row ${md?'done':''}"><input type="checkbox" class="tick" data-task="${id}" ${md?'checked':''} aria-label="${esc(n)}"><div class="nm">${esc(n)}</div><div></div></div>`;});
-  const wv=(S.days[k]&&S.days[k].weight)||'';
-  h+=`<div class="row"><div></div><div><div class="nm">Morning bodyweight</div><div class="dt">Before food, after the toilet</div></div><div class="wt"><input type="number" inputmode="decimal" step="0.1" data-bw="1" value="${esc(wv)}" aria-label="Morning bodyweight in kg"></div></div></div>`;
+  h+=`</div>`;
   return h;
 }
 
@@ -596,13 +603,13 @@ function viewWeights(){
   h+=`</tr></thead><tbody>`;
   ORDER.forEach(id=>{
     const e=EX[id], from=FIRST[id], mon=from===0?START:addDays(W1,(from-1)*7);
-    h+=`<tr><td><div class="exn">${esc(e.n)}</div><div class="exm">${KIND[e.k]}, from ${mon.getDate()} ${MN[mon.getMonth()]}</div><input type="number" inputmode="decimal" step="0.5" data-start="${id}" value="${esc(startOf(id)??'')}" aria-label="Start weight for ${esc(e.n)}" placeholder="kg"></td>`;
+    h+=`<tr><td><div class="exn">${esc(e.n)}</div><div class="exm">${KIND[e.k]}, from ${mon.getDate()} ${MN[mon.getMonth()]}</div><input type="number" inputmode="decimal" step="${STEP[e.k]}" data-start="${id}" value="${esc(startOf(id)??'')}" aria-label="Start weight for ${esc(e.n)}" placeholder="kg"></td>`;
     for(let w=0;w<=13;w++){
       const used=USED[id].has(w);
       if(!used){h+=`<td class="num off">–</td>`;continue;}
       // a week you've already lifted shows what you did (bold); later weeks build on it
       const ws=w===0?START:addDays(W1,(w-1)*7); let did=null;
-      for(let i=0;i<7;i++){const v=logOf(key(addDays(ws,i)),id);if(v!==null)did=did===null?v:Math.max(did,v);}
+      for(let i=0;i<7;i++){const v=logOf(key(addDays(ws,i)),id);if(v!==null)did=did===null?snap(id,v):Math.max(did,snap(id,v));}
       const p=did!==null?did:planned(id,w,key(ws));
       h+=`<td class="num">${p===null?'?':(did!==null?'<b>'+kgTxt(p)+'</b>':kgTxt(p))}</td>`;
     }
@@ -764,9 +771,9 @@ document.addEventListener('change',e=>{
     if(t.checked&&task.startsWith('ex:')){const id=task.slice(3);if(logOf(k,id)===null){const p=planned(id,weekIdx(CUR),k);if(p!==null){ds.log=ds.log||{};ds.log[id]=String(p);}}}
     save();render();
   }
-  else if(t.dataset.log){const ds=dayState(k),id=t.dataset.log,v=t.value.trim();ds.log=ds.log||{};if(v===''){delete ds.log[id];if(ALIAS[id])delete ds.log[ALIAS[id]];}else ds.log[id]=v;save();}
+  else if(t.dataset.log){const ds=dayState(k),id=t.dataset.log,v=t.value.trim();ds.log=ds.log||{};if(v===''){delete ds.log[id];if(ALIAS[id])delete ds.log[ALIAS[id]];}else{const x=num(v);if(x!==null){ds.log[id]=String(snap(id,x));t.value=kgTxt(snap(id,x));}}save();}
   else if(t.dataset.bw){const ds=dayState(t.dataset.bwk||k);ds.weight=t.value;save();if(TAB==='weighin')render();}
-  else if(t.dataset.start){const v=t.value.trim();if(v==='')delete S.start[t.dataset.start];else S.start[t.dataset.start]=parseFloat(v);save();render();}
+  else if(t.dataset.start){const v=t.value.trim();if(v==='')delete S.start[t.dataset.start];else if(num(v)!==null)S.start[t.dataset.start]=snap(t.dataset.start,num(v));save();render();}
   else if(t.dataset.set){const v=parseFloat(t.value);if(!isNaN(v)&&v>0){S.settings[t.dataset.set]=v;save();render();}}
 });
 render();
