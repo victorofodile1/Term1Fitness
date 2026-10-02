@@ -102,6 +102,8 @@ input:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-o
 .row .wt a{font-size:13px;color:var(--blue);cursor:pointer;text-decoration:underline}
 .row .log{display:flex;align-items:center;gap:4px;justify-content:flex-end;margin-top:4px;font-size:12px;color:var(--muted)}
 .row .log input{width:60px;padding:3px 6px;font-size:14px}
+.row .wt .first{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:700;line-height:1.1}
+.row .wt .last{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap}
 .tag{display:inline-block;font-size:11px;font-weight:700;border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:2px;background:var(--sunk);color:var(--muted)}
 
 .tick{appearance:none;-webkit-appearance:none;width:30px;height:30px;border:2px solid var(--line);border-radius:9px;background:var(--surface);cursor:pointer;display:grid;place-content:center;margin:0}
@@ -203,31 +205,31 @@ const TYPES={
 
 /* ---------- exercises ---------- */
 // kind: M machine/cable, D dumbbell (weight per dumbbell), B barbell. inc kg added every `every` weeks.
+// Steps match real gym kit: dumbbells come in 2.5 kg jumps, barbells load in 2.5 kg steps, machine stacks move in 5 kg plates.
 const EX={
-  latpd:{n:'Lat pulldown (wide grip)',k:'M',rest:90,inc:2.5,every:1},
-  rowmach:{n:'Seated row machine',k:'M',rest:90,inc:2.5,every:1},
-  dbrow:{n:'Single-arm dumbbell row',k:'D',rest:90,inc:2,every:2},
+  latpd:{n:'Lat pulldown (wide grip)',k:'M',rest:90,inc:5,every:2},
+  rowmach:{n:'Seated row machine',k:'M',rest:90,inc:5,every:2},
+  dbrow:{n:'Single-arm dumbbell row',k:'D',rest:90,inc:2.5,every:1},
   bbrow:{n:'Barbell bent-over row',k:'B',rest:90,inc:2.5,every:1},
-  shpress:{n:'Seated shoulder press (machine)',k:'M',rest:90,inc:2.5,every:2},
-  dbshp:{n:'Seated dumbbell shoulder press',k:'D',rest:90,inc:2,every:2},
-  cablecurl:{n:'Cable biceps curl',k:'M',rest:60,inc:2.5,every:2},
-  dbhammer:{n:'Dumbbell hammer curl',k:'D',rest:60,inc:2,every:3},
-  dbcurl:{n:'Dumbbell curl',k:'D',rest:60,inc:2,every:3},
+  shpress:{n:'Seated shoulder press (machine)',k:'M',rest:90,inc:5,every:2},
+  dbshp:{n:'Seated dumbbell shoulder press',k:'D',rest:90,inc:2.5,every:2},
+  cablecurl:{n:'Cable biceps curl',k:'M',rest:60,inc:5,every:3},
+  dbhammer:{n:'Dumbbell hammer curl',k:'D',rest:60,inc:2.5,every:3},
+  dbcurl:{n:'Dumbbell curl',k:'D',rest:60,inc:2.5,every:3},
   bbcurl:{n:'Barbell curl',k:'B',rest:60,inc:2.5,every:2},
-  crunch:{n:'Cable crunch',k:'M',rest:60,inc:2.5,every:2},
-  latpull:{n:'Seated lat pull machine',k:'M',rest:90,inc:2.5,every:1},
-  cablerow:{n:'Seated cable row',k:'M',rest:90,inc:2.5,every:1},
-  pushdown:{n:'Cable triceps pushdown',k:'M',rest:60,inc:2.5,every:2},
-  dbohe:{n:'Dumbbell overhead triceps extension',k:'D',rest:60,inc:2,every:3},
-  goblet:{n:'Goblet squat',k:'D',rest:90,inc:2,every:1},
-  bss:{n:'Dumbbell Bulgarian split squat',k:'D',rest:90,inc:2,every:2},
-  dbrdl:{n:'Dumbbell Romanian deadlift',k:'D',rest:90,inc:2,every:1},
-  bbrdl:{n:'Barbell Romanian deadlift',k:'B',rest:90,inc:2.5,every:1},
-  legpress:{n:'Seated leg press',k:'M',rest:90,inc:5,every:1},
-  legcurl:{n:'Seated leg curl',k:'M',rest:60,inc:2.5,every:2},
-  legext:{n:'Leg extension',k:'M',rest:60,inc:2.5,every:2},
-  pecdeck:{n:'Pec deck',k:'M',rest:60,inc:2.5,every:2},
-  dbfly:{n:'Dumbbell fly',k:'D',rest:60,inc:2,every:3},
+  crunch:{n:'Cable crunch',k:'M',rest:60,inc:5,every:2},
+  latpull:{n:'Seated lat pull machine',k:'M',rest:90,inc:5,every:2},
+  cablerow:{n:'Seated cable row',k:'M',rest:90,inc:5,every:2},
+  pushdown:{n:'Cable triceps pushdown',k:'M',rest:60,inc:5,every:2},
+  dbohe:{n:'Dumbbell overhead triceps extension',k:'D',rest:60,inc:2.5,every:3},
+  goblet:{n:'Goblet squat',k:'D',rest:90,inc:2.5,every:1},
+  bss:{n:'Dumbbell Bulgarian split squat',k:'D',rest:90,inc:2.5,every:2},
+  bbrdl:{n:'Barbell Romanian deadlift',k:'B',rest:90,inc:5,every:1},
+  legpress:{n:'Seated leg press',k:'M',rest:90,inc:10,every:1},
+  legcurl:{n:'Seated leg curl',k:'M',rest:60,inc:5,every:2},
+  legext:{n:'Leg extension',k:'M',rest:60,inc:5,every:2},
+  pecdeck:{n:'Pec deck',k:'M',rest:60,inc:5,every:2},
+  dbfly:{n:'Dumbbell fly',k:'D',rest:60,inc:2.5,every:3},
   cgbench:{n:'Close-grip bench press',k:'B',rest:90,inc:2.5,every:1}
 };
 const KIND={M:'Machine',D:'Dumbbell',B:'Barbell'};
@@ -238,8 +240,8 @@ const PLAN={
   B:{oct:[['latpull',3,10],['cablerow',3,12],['cablecurl',3,12],['pushdown',3,12],['crunch',3,15]],
      nov:[['latpull',3,10],['cablerow',3,12],['dbcurl',3,12],['dbohe',3,12],['crunch',3,15]],
      dec:[['latpull',3,10],['cablerow',3,12],['dbhammer',3,12],['dbohe',3,12],['crunch',3,15]]},
-  L:{oct:[['goblet',3,10],['dbrdl',3,10],['legpress',3,10],['legcurl',3,12],['legext',3,12],['crunch',3,15]],
-     nov:[['goblet',3,10],['dbrdl',3,10],['legpress',3,10],['legcurl',3,12],['legext',3,12],['crunch',3,15]],
+  L:{oct:[['goblet',3,10],['bbrdl',3,10],['legpress',3,10],['legcurl',3,12],['legext',3,12],['crunch',3,15]],
+     nov:[['goblet',3,10],['bbrdl',3,10],['legpress',3,10],['legcurl',3,12],['legext',3,12],['crunch',3,15]],
      dec:[['bss',3,10],['bbrdl',3,10],['legpress',3,10],['legcurl',3,12],['legext',3,12],['crunch',3,15]]},
   C:{oct:[['pecdeck',3,12],['latpd',3,12],['shpress',3,12],['pushdown',3,12],['crunch',3,15]],
      nov:[['dbfly',3,12],['latpd',3,12],['dbshp',3,12],['pushdown',3,12],['crunch',3,15]],
@@ -357,35 +359,56 @@ async function push(){
 }
 function schedulePush(){if(!cloudReady()||!CLOUD.user)return;clearTimeout(CLOUD.timer);CLOUD.timer=setTimeout(push,1500);}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&CLOUD.timer)push();});
+// Usernames are turned into a private login address behind the scenes. No email is ever sent.
+const USER_DOMAIN='term1fitness.app';
+const toLogin=u=>u+'@'+USER_DOMAIN;
+const fromLogin=e=>(e||'').split('@')[0];
 async function doAuth(kind){
   if(!cloudReady())return;
-  const em=(document.getElementById('authEmail')||{}).value||'', pw=(document.getElementById('authPass')||{}).value||'';
   if(kind==='out'){await push();await CLOUD.client.auth.signOut();CLOUD.status='Signed out. Your progress stays on this device.';render();return;}
-  if(!em||pw.length<6){CLOUD.status='Enter your email and a password of at least 6 characters.';render();return;}
-  CLOUD.status=kind==='up'?'Creating your account...':'Signing in...';render();
-  const res=kind==='up'?await CLOUD.client.auth.signUp({email:em,password:pw}):await CLOUD.client.auth.signInWithPassword({email:em,password:pw});
-  if(res.error)CLOUD.status=res.error.message;
-  else if(kind==='up'&&!res.data.session)CLOUD.status='Account created. Open the confirmation email, then come back and sign in.';
+  const u=((document.getElementById('authUser')||{}).value||'').trim().toLowerCase(), pw=(document.getElementById('authPass')||{}).value||'';
+  if(!/^[a-z0-9_.]{3,20}$/.test(u)){CLOUD.status='Usernames are 3 to 20 characters: letters, numbers, dots and underscores only.';render();return;}
+  if(pw.length<6){CLOUD.status='Use a password of at least 6 characters.';render();return;}
+  CLOUD.status=kind==='up'?'Creating your account...':'Signing in...';
+  const el=document.getElementById('cloudstatus');if(el)el.textContent=CLOUD.status;
+  const res=kind==='up'?await CLOUD.client.auth.signUp({email:toLogin(u),password:pw}):await CLOUD.client.auth.signInWithPassword({email:toLogin(u),password:pw});
+  if(res.error){
+    const m=res.error.message||'';
+    CLOUD.status=/invalid login/i.test(m)?'Wrong username or password.':/already registered|already exists/i.test(m)?'That username is taken. Try signing in instead.':m;
+  }else if(kind==='up'&&!res.data.session){CLOUD.status='Account created, but Supabase still has "Confirm email" switched on. Turn it off (Authentication, Sign In / Providers, Email), then sign in.';}
   render();
 }
 function cloudHTML(){
   if(!cloudReady())return `<div class="field"><label>Cloud save<span class="hint">Not set up yet. Add your Supabase URL and key to index.html. Progress is saved on this device for now.</span></label></div>`;
   if(!CLOUD.user)return `<div class="field" style="display:block"><label>Cloud save<span class="hint">Sign in so your progress is saved online and works on any device.</span></label>
-    <div style="display:grid;gap:8px;margin-top:10px"><input id="authEmail" class="txt" type="email" autocomplete="email" placeholder="Email" aria-label="Email"><input id="authPass" class="txt" type="password" autocomplete="current-password" placeholder="Password (6+ characters)" aria-label="Password">
-    <div style="display:flex;gap:8px"><button class="btn" data-auth="in">Sign in</button><button class="btn" data-auth="up">Create account</button></div>
-    <span class="hint" id="cloudstatus">${esc(CLOUD.status)}</span></div></div>`;
-  return `<div class="field"><label>Cloud save<span class="hint">Signed in as ${esc(CLOUD.user.email||'you')}</span><span class="hint" id="cloudstatus">${esc(CLOUD.status)}</span></label><button class="btn" data-auth="out">Sign out</button></div>`;
+    <form id="authForm" style="display:grid;gap:8px;margin-top:10px">
+      <input id="authUser" name="username" class="txt" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Username" aria-label="Username">
+      <input id="authPass" name="password" class="txt" type="password" autocomplete="current-password" placeholder="Password (6+ characters)" aria-label="Password">
+      <div style="display:flex;gap:8px"><button class="btn" type="submit" data-authsubmit="in">Sign in</button><button class="btn" type="submit" data-authsubmit="up">Create account</button></div>
+      <span class="hint" id="cloudstatus">${esc(CLOUD.status)}</span>
+    </form></div>`;
+  return `<div class="field"><label>Cloud save<span class="hint">Signed in as ${esc(fromLogin(CLOUD.user.email))}</span><span class="hint" id="cloudstatus">${esc(CLOUD.status)}</span></label><button class="btn" data-auth="out">Sign out</button></div>`;
 }
+document.addEventListener('submit',e=>{if(e.target&&e.target.id==='authForm'){e.preventDefault();doAuth((e.submitter&&e.submitter.dataset.authsubmit)||'in');}});
 
 const isDone = (k,task)=>!!(S.days[k]&&S.days[k].t&&S.days[k].t[task]);
 
 /* ---------- projections ---------- */
-function projected(id,w){
-  const st=parseFloat(S.start[id]); if(!st&&st!==0) return null; if(isNaN(st))return null;
-  const e=EX[id], f=Math.max(FIRST[id],1); let n=0;
-  for(let i=f+1;i<=w;i++){n++;}
-  let kg=st+e.inc*Math.floor(n/e.every);
-  return Math.round(kg*10)/10;
+// Oct and Nov used to be dumbbell RDL, so any weight already saved under that name still counts.
+const ALIAS={bbrdl:'dbrdl'};
+const num=v=>{const x=parseFloat(v);return isNaN(x)?null:x;};
+const startOf=id=>{let v=num(S.start[id]);if(v===null&&ALIAS[id])v=num(S.start[ALIAS[id]]);return v;};
+const logOf=(k,id)=>{const l=S.days[k]&&S.days[k].log;if(!l)return null;let v=num(l[id]);if(v===null&&ALIAS[id])v=num(l[ALIAS[id]]);return v;};
+// the most recent weight actually lifted before day key k
+function lastLog(id,k){let best=null;for(const dk in S.days){if(dk<k){const v=logOf(dk,id);if(v!==null&&(!best||dk>best.k))best={k:dk,kg:v};}}return best;}
+// how many planned increases fall after week a, up to and including week w
+function steps(id,a,w){const e=EX[id],f=Math.max(FIRST[id],1),g=x=>x<=f?0:Math.floor((x-f)/e.every);return g(w)-g(a);}
+// weight to use in week w: builds on the last weight lifted (before day key k), or on the start weight
+function planned(id,w,k){
+  const e=EX[id], L=lastLog(id,k);
+  if(L)return Math.round((L.kg+e.inc*steps(id,weekIdx(parseKey(L.k)),w))*10)/10;
+  const st=startOf(id); if(st===null)return null;
+  return Math.round((st+e.inc*steps(id,FIRST[id],w))*10)/10;
 }
 
 /* ---------- tasks, time, calories ---------- */
@@ -401,7 +424,7 @@ function sessionDone(d){const g=gymTasks(d);return g.length>0&&g.every(x=>isDone
 function dayPct(d){const a=tasksFor(d);return a.filter(x=>isDone(key(d),x)).length/a.length;}
 function liftMinutes(d){
   const t=dayType(d); if(t==='R')return 0;
-  let m=7; const b=t==='L'?null:benchFor(d);
+  let m=5; const b=t==='L'?null:benchFor(d);
   if(b&&b.test)m+=5*3+3*4;else if(b)m+=b.sets*(0.75+b.rest/60);
   exercisesFor(d).forEach(([id,s])=>{m+=s*(0.75+EX[id].rest/60)+1;});
   return m;
@@ -469,7 +492,7 @@ function viewToday(){
   if(t!=='R'){
     // warm-up
     const b=t==='L'?null:benchFor(d);
-    h+=`<div class="sec">Warm-up <small>about 7 min</small></div><div class="card"><ul class="plain"><li>Skipping, 3 minutes</li>`;
+    h+=`<div class="sec">Warm-up <small>about 5 min</small></div><div class="card"><ul class="plain">`;
     if(b&&!b.test)h+=`<li>Bench warm-up: `+benchWarm(b.kg).map(([kg,r])=>kg+' kg × '+r).join(', ')+`</li>`;
     if(t==='L')h+=`<li>One light set of goblet squats to warm your hips and knees</li>`;
     h+=`</ul></div>`;
@@ -495,11 +518,14 @@ function viewToday(){
     if(exs.length){
       h+=`<div class="sec">Exercises <small>stop 1 to 2 reps before failure</small></div><div class="card">`;
       exs.forEach(([id,s,r])=>{
-        const e=EX[id], p=projected(id,w), dn=isDone(k,'ex:'+id), lg=(S.days[k]&&S.days[k].log&&S.days[k].log[id])||'';
+        const e=EX[id], p=planned(id,w,k), last=lastLog(id,k), lg=logOf(k,id), dn=isDone(k,'ex:'+id);
+        const ld=last?parseKey(last.k):null;
         h+=`<div class="row ${dn?'done':''}"><input type="checkbox" class="tick" data-task="ex:${id}" ${dn?'checked':''} aria-label="${esc(e.n)} done">
-        <div><div class="nm">${esc(e.n)}<span class="tag">${KIND[e.k]}</span></div><div class="dt">${s} × ${r}${id==='bss'?' each leg':''}, rest ${restTxt(e.rest)}${e.k==='D'?', weight per dumbbell':''}</div></div>
-        <div class="wt">${p!==null?`<div class="p">${kgTxt(p)}<small> kg</small></div>`:`<a data-go="weights">Set start weight</a>`}
-        <label class="log">used <input type="number" inputmode="decimal" step="0.5" data-log="${id}" value="${esc(lg)}" aria-label="Weight used for ${esc(e.n)}"></label></div></div>`;
+        <div><div class="nm">${esc(e.n)}<span class="tag">${KIND[e.k]}</span></div><div class="dt">${s} × ${r}${id==='bss'?' each leg':''}, rest ${restTxt(e.rest)}${e.k==='D'?', weight per dumbbell':''}</div>
+        ${p===null?'<div class="dt">First time: pick a weight you can lift for every rep with 1 to 2 left, then enter it.</div>':''}</div>
+        <div class="wt">${p!==null?`<div class="p">${kgTxt(p)}<small> kg</small></div>`:`<div class="first">First time</div>`}
+        <label class="log">${p!==null?'lifted':'start'} <input type="number" inputmode="decimal" step="0.5" data-log="${id}" value="${lg!==null?kgTxt(lg):''}" placeholder="${p!==null?kgTxt(p):'kg'}" aria-label="Weight lifted for ${esc(e.n)}"></label>
+        ${last?`<div class="last">Last: ${kgTxt(last.kg)} kg, ${ld.getDate()} ${MN[ld.getMonth()]}</div>`:''}</div></div>`;
       });
       h+=`</div>`;
     }
@@ -570,14 +596,19 @@ function viewWeights(){
   h+=`</tr></thead><tbody>`;
   ORDER.forEach(id=>{
     const e=EX[id], from=FIRST[id], mon=from===0?START:addDays(W1,(from-1)*7);
-    h+=`<tr><td><div class="exn">${esc(e.n)}</div><div class="exm">${KIND[e.k]}, from ${mon.getDate()} ${MN[mon.getMonth()]}</div><input type="number" inputmode="decimal" step="0.5" data-start="${id}" value="${esc(S.start[id]??'')}" aria-label="Start weight for ${esc(e.n)}" placeholder="kg"></td>`;
+    h+=`<tr><td><div class="exn">${esc(e.n)}</div><div class="exm">${KIND[e.k]}, from ${mon.getDate()} ${MN[mon.getMonth()]}</div><input type="number" inputmode="decimal" step="0.5" data-start="${id}" value="${esc(startOf(id)??'')}" aria-label="Start weight for ${esc(e.n)}" placeholder="kg"></td>`;
     for(let w=0;w<=13;w++){
-      const used=USED[id].has(w), p=used?projected(id,w):null;
-      h+=`<td class="num ${used?'':'off'}">${used?(p===null?'?':kgTxt(p)):'–'}</td>`;
+      const used=USED[id].has(w);
+      if(!used){h+=`<td class="num off">–</td>`;continue;}
+      // a week you've already lifted shows what you did (bold); later weeks build on it
+      const ws=w===0?START:addDays(W1,(w-1)*7); let did=null;
+      for(let i=0;i<7;i++){const v=logOf(key(addDays(ws,i)),id);if(v!==null)did=did===null?v:Math.max(did,v);}
+      const p=did!==null?did:planned(id,w,key(ws));
+      h+=`<td class="num">${p===null?'?':(did!==null?'<b>'+kgTxt(p)+'</b>':kgTxt(p))}</td>`;
     }
     h+=`</tr>`;
   });
-  h+=`</tbody></table></div><p class="small muted" style="margin-top:8px">Only move up if you hit every rep the week before. If not, stay at the same weight.</p>`;
+  h+=`</tbody></table></div><p class="small muted" style="margin-top:8px">Bold weeks are what you actually lifted. If you lift more (or less) than planned, enter it on the Today tab and every week after that moves from your new weight.</p>`;
   h+=`<h2>Settings</h2><div class="card">${cloudHTML()}<div class="field"><label>Theme</label><div><button class="btn" data-theme="">Auto</button> <button class="btn" data-theme="light">Light</button> <button class="btn" data-theme="dark">Dark</button></div></div>
   <div class="field"><label>Reset<span class="hint">Clears every tick, weight and setting on this device</span></label><button class="btn danger" data-reset="1">Reset all</button></div></div>`;
   return h;
@@ -727,8 +758,13 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('change',e=>{
   const t=e.target,k=key(CUR);
-  if(t.dataset.task){const ds=dayState(k);ds.t[t.dataset.task]=t.checked;save();render();}
-  else if(t.dataset.log){const ds=dayState(k);ds.log[t.dataset.log]=t.value;save();}
+  if(t.dataset.task){
+    const ds=dayState(k),task=t.dataset.task;ds.t[task]=t.checked;
+    // ticking an exercise with no weight entered records the planned weight, so it becomes your "last" weight
+    if(t.checked&&task.startsWith('ex:')){const id=task.slice(3);if(logOf(k,id)===null){const p=planned(id,weekIdx(CUR),k);if(p!==null){ds.log=ds.log||{};ds.log[id]=String(p);}}}
+    save();render();
+  }
+  else if(t.dataset.log){const ds=dayState(k),id=t.dataset.log,v=t.value.trim();ds.log=ds.log||{};if(v===''){delete ds.log[id];if(ALIAS[id])delete ds.log[ALIAS[id]];}else ds.log[id]=v;save();}
   else if(t.dataset.bw){const ds=dayState(t.dataset.bwk||k);ds.weight=t.value;save();if(TAB==='weighin')render();}
   else if(t.dataset.start){const v=t.value.trim();if(v==='')delete S.start[t.dataset.start];else S.start[t.dataset.start]=parseFloat(v);save();render();}
   else if(t.dataset.set){const v=parseFloat(t.value);if(!isNaN(v)&&v>0){S.settings[t.dataset.set]=v;save();render();}}
