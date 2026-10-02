@@ -204,33 +204,34 @@ const TYPES={
 };
 
 /* ---------- exercises ---------- */
-// kind: M machine/cable, D dumbbell (weight per dumbbell), B barbell. inc kg added every `every` weeks.
+// kind: M machine/cable, D dumbbell (weight per dumbbell), B barbell.
+// g: realistic total gain for a beginner over the 12 weeks (0.5 = 50% heavier by the end), while eating in a deficit.
 // Steps match real gym kit: dumbbells come in 2.5 kg jumps, barbells load in 2.5 kg steps, machine stacks move in 5 kg plates.
 const EX={
-  latpd:{n:'Lat pulldown (wide grip)',k:'M',rest:90,inc:5,every:2},
-  rowmach:{n:'Seated row machine',k:'M',rest:90,inc:5,every:2},
-  dbrow:{n:'Single-arm dumbbell row',k:'D',rest:90,inc:2.5,every:1},
-  bbrow:{n:'Barbell bent-over row',k:'B',rest:90,inc:2.5,every:1},
-  shpress:{n:'Seated shoulder press (machine)',k:'M',rest:90,inc:5,every:2},
-  dbshp:{n:'Seated dumbbell shoulder press',k:'D',rest:90,inc:2.5,every:2},
-  cablecurl:{n:'Cable biceps curl',k:'M',rest:60,inc:5,every:3},
-  dbhammer:{n:'Dumbbell hammer curl',k:'D',rest:60,inc:2.5,every:3},
-  dbcurl:{n:'Dumbbell curl',k:'D',rest:60,inc:2.5,every:3},
-  bbcurl:{n:'Barbell curl',k:'B',rest:60,inc:2.5,every:2},
-  crunch:{n:'Cable crunch',k:'M',rest:60,inc:5,every:2},
-  latpull:{n:'Seated lat pull machine',k:'M',rest:90,inc:5,every:2},
-  cablerow:{n:'Seated cable row',k:'M',rest:90,inc:5,every:2},
-  pushdown:{n:'Cable triceps pushdown',k:'M',rest:60,inc:5,every:2},
-  dbohe:{n:'Dumbbell overhead triceps extension',k:'D',rest:60,inc:2.5,every:3},
-  goblet:{n:'Goblet squat',k:'D',rest:90,inc:2.5,every:1},
-  bss:{n:'Dumbbell Bulgarian split squat',k:'D',rest:90,inc:2.5,every:2},
-  bbrdl:{n:'Barbell Romanian deadlift',k:'B',rest:90,inc:5,every:1},
-  legpress:{n:'Seated leg press',k:'M',rest:90,inc:10,every:1},
-  legcurl:{n:'Seated leg curl',k:'M',rest:60,inc:5,every:2},
-  legext:{n:'Leg extension',k:'M',rest:60,inc:5,every:2},
-  pecdeck:{n:'Pec deck',k:'M',rest:60,inc:5,every:2},
-  dbfly:{n:'Dumbbell fly',k:'D',rest:60,inc:2.5,every:3},
-  cgbench:{n:'Close-grip bench press',k:'B',rest:90,inc:2.5,every:1}
+    latpd:{n:'Lat pulldown (wide grip)',k:'M',rest:90,g:0.3},
+    rowmach:{n:'Seated row machine',k:'M',rest:90,g:0.3},
+    dbrow:{n:'Single-arm dumbbell row',k:'D',rest:90,g:0.3},
+    bbrow:{n:'Barbell bent-over row',k:'B',rest:90,g:0.25},
+    shpress:{n:'Seated shoulder press (machine)',k:'M',rest:90,g:0.3},
+    dbshp:{n:'Seated dumbbell shoulder press',k:'D',rest:90,g:0.25},
+    cablecurl:{n:'Cable biceps curl',k:'M',rest:60,g:0.25},
+    dbhammer:{n:'Dumbbell hammer curl',k:'D',rest:60,g:0.25},
+    dbcurl:{n:'Dumbbell curl',k:'D',rest:60,g:0.25},
+    bbcurl:{n:'Barbell curl',k:'B',rest:60,g:0.2},
+    crunch:{n:'Cable crunch',k:'M',rest:60,g:0.3},
+    latpull:{n:'Seated lat pull machine',k:'M',rest:90,g:0.3},
+    cablerow:{n:'Seated cable row',k:'M',rest:90,g:0.3},
+    pushdown:{n:'Cable triceps pushdown',k:'M',rest:60,g:0.25},
+    dbohe:{n:'Dumbbell overhead triceps extension',k:'D',rest:60,g:0.25},
+    goblet:{n:'Goblet squat',k:'D',rest:90,g:0.4},
+    bss:{n:'Dumbbell Bulgarian split squat',k:'D',rest:90,g:0.2},
+    bbrdl:{n:'Barbell Romanian deadlift',k:'B',rest:90,g:0.5},
+    legpress:{n:'Seated leg press',k:'M',rest:90,g:0.5},
+    legcurl:{n:'Seated leg curl',k:'M',rest:60,g:0.3},
+    legext:{n:'Leg extension',k:'M',rest:60,g:0.3},
+    pecdeck:{n:'Pec deck',k:'M',rest:60,g:0.25},
+    dbfly:{n:'Dumbbell fly',k:'D',rest:60,g:0.2},
+    cgbench:{n:'Close-grip bench press',k:'B',rest:90,g:0.2}
 };
 const KIND={M:'Machine',D:'Dumbbell',B:'Barbell'};
 // smallest real jump: dumbbells and barbells 2.5 kg, machine stacks 5 kg
@@ -404,14 +405,14 @@ const startOf=id=>{let v=num(S.start[id]);if(v===null&&ALIAS[id])v=num(S.start[A
 const logOf=(k,id)=>{const l=S.days[k]&&S.days[k].log;if(!l)return null;let v=num(l[id]);if(v===null&&ALIAS[id])v=num(l[ALIAS[id]]);return v;};
 // the most recent weight actually lifted before day key k
 function lastLog(id,k){let best=null;for(const dk in S.days){if(dk<k){const v=logOf(dk,id);if(v!==null&&(!best||dk>best.k))best={k:dk,kg:v};}}return best;}
-// how many planned increases fall after week a, up to and including week w
-function steps(id,a,w){const e=EX[id],f=Math.max(FIRST[id],1),g=x=>x<=f?0:Math.floor((x-f)/e.every);return g(w)-g(a);}
+// beginner gains come quickly in the first weeks, then slow down: reaches 1+g after 12 weeks of training
+function curve(id,w){const n=Math.max(0,w-Math.max(FIRST[id],1));return 1+EX[id].g*(1-Math.exp(-n/6))/(1-Math.exp(-2));}
 // weight to use in week w: builds on the last weight lifted (before day key k), or on the start weight
 function planned(id,w,k){
-  const e=EX[id], L=lastLog(id,k);
-  if(L)return snap(id,snap(id,L.kg)+e.inc*steps(id,weekIdx(parseKey(L.k)),w));
+  const L=lastLog(id,k);
+  if(L)return snap(id,snap(id,L.kg)*curve(id,w)/curve(id,weekIdx(parseKey(L.k))));
   const st=startOf(id); if(st===null)return null;
-  return snap(id,snap(id,st)+e.inc*steps(id,FIRST[id],w));
+  return snap(id,snap(id,st)*curve(id,w)/curve(id,FIRST[id]));
 }
 
 /* ---------- tasks, time, calories ---------- */
