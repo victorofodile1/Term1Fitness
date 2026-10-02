@@ -192,13 +192,18 @@ const TEST_KEY='2026-12-30';
 
 function dayType(d){
   if(key(d)===TEST_KEY) return 'T';
-  return ({1:'A',3:'B',5:'L',6:'C'})[d.getDay()]||'R';
+  // starter week (1 to 4 Oct): Fri lower, Sat practice bench
+  if(weekIdx(d)===0) return ({5:'L',6:'C'})[d.getDay()]||'R';
+  // from Mon 5 Oct: Mon Upper A, Tue Lower A, Wed Upper B, Fri Upper C, Sat Lower B
+  return ({1:'A',2:'L',3:'B',5:'C',6:'N'})[d.getDay()]||'R';
 }
+const isLeg = t=>t==='L'||t==='N';
 const TYPES={
-  A:{name:'Upper A',sub:'Heavy bench, back width, shoulders',c:'var(--red)',t:'var(--tint-red)'},
-  B:{name:'Upper B',sub:'Volume bench, back thickness, arms',c:'var(--blue)',t:'var(--tint-blue)'},
-  L:{name:'Lower',sub:'Legs and abs',c:'var(--yellow)',t:'var(--tint-yellow)'},
-  C:{name:'Upper C',sub:'Paused bench, chest, shoulders',c:'var(--green)',t:'var(--tint-green)'},
+  A:{name:'Upper A',sub:'Heavy bench, chest, back, arms',c:'var(--red)',t:'var(--tint-red)'},
+  B:{name:'Upper B',sub:'Volume bench, shoulders, back, arms',c:'var(--blue)',t:'var(--tint-blue)'},
+  L:{name:'Lower A',sub:'Legs, calves and abs',c:'var(--yellow)',t:'var(--tint-yellow)'},
+  N:{name:'Lower B',sub:'Legs, calves and abs',c:'var(--yellow)',t:'var(--tint-yellow)'},
+  C:{name:'Upper C',sub:'Paused bench, back, shoulders, arms',c:'var(--green)',t:'var(--tint-green)'},
   T:{name:'Test day',sub:'Your 1 rep max attempt',c:'var(--red)',t:'var(--tint-red)'},
   R:{name:'Rest day',sub:'Steps, food and sleep',c:'var(--grey)',t:'var(--tint-grey)'}
 };
@@ -208,54 +213,44 @@ const TYPES={
 // T: where a consistent beginner (about 83 kg) can get by late December, in kg. jump: weekly jump if bigger than the kit's smallest step.
 // Steps match real gym kit: dumbbells come in 2.5 kg jumps, barbells load in 2.5 kg steps, machine stacks move in 5 kg plates.
 const EX={
-    latpd:{n:'Lat pulldown (wide grip)',k:'M',rest:90,T:65},
-    rowmach:{n:'Seated row machine',k:'M',rest:90,T:65},
-    dbrow:{n:'Single-arm dumbbell row',k:'D',rest:90,T:30},
-    bbrow:{n:'Barbell bent-over row',k:'B',rest:90,T:60},
-    shpress:{n:'Seated shoulder press (machine)',k:'M',rest:90,T:50},
-    dbshp:{n:'Seated dumbbell shoulder press',k:'D',rest:90,T:22.5},
-    cablecurl:{n:'Cable biceps curl',k:'M',rest:60,T:30},
-    dbhammer:{n:'Dumbbell hammer curl',k:'D',rest:60,T:15},
-    dbcurl:{n:'Dumbbell curl',k:'D',rest:60,T:15},
-    bbcurl:{n:'Barbell curl',k:'B',rest:60,T:35},
-    crunch:{n:'Cable crunch',k:'M',rest:60,T:80},
-    latpull:{n:'Seated lat pull machine',k:'M',rest:90,T:65},
-    cablerow:{n:'Seated cable row',k:'M',rest:90,T:65},
-    pushdown:{n:'Cable triceps pushdown',k:'M',rest:60,T:35},
-    dbohe:{n:'Dumbbell overhead triceps extension',k:'D',rest:60,T:22.5},
-    goblet:{n:'Goblet squat',k:'D',rest:90,T:32.5},
-    bss:{n:'Dumbbell Bulgarian split squat',k:'D',rest:90,T:22.5},
-    bbrdl:{n:'Barbell Romanian deadlift',k:'B',rest:90,T:90,jump:5},
-    legpress:{n:'Seated leg press',k:'M',rest:90,T:120},
-    legcurl:{n:'Seated leg curl',k:'M',rest:60,T:50},
-    legext:{n:'Leg extension',k:'M',rest:60,T:50},
-    pecdeck:{n:'Pec deck',k:'M',rest:60,T:60},
-    dbfly:{n:'Dumbbell fly',k:'D',rest:60,T:15},
-    cgbench:{n:'Close-grip bench press',k:'B',rest:90,T:60}
+  chestpress:{n:'Chest press machine',k:'M',rest:90,T:70},
+  latpd:{n:'Lat pulldown machine',k:'M',rest:90,T:65},
+  rowmach:{n:'Seated row machine',k:'M',rest:90,T:65},
+  shpress:{n:'Seated shoulder press machine',k:'M',rest:90,T:50},
+  pecdeck:{n:'Pec deck',k:'M',rest:60,T:60},
+  dblat:{n:'Dumbbell lateral raise',k:'D',rest:60,T:10},
+  cablecurl:{n:'Cable biceps curl',k:'M',rest:60,T:30},
+  pushdown:{n:'Cable triceps pushdown',k:'M',rest:60,T:35},
+  crunch:{n:'Cable crunch',k:'M',rest:60,T:80},
+  legpress:{n:'Seated leg press',k:'M',rest:90,T:120},
+  bbrdl:{n:'Barbell Romanian deadlift',k:'B',rest:90,T:90,jump:5},
+  legcurl:{n:'Seated leg curl',k:'M',rest:60,T:50},
+  legext:{n:'Leg extension',k:'M',rest:60,T:50},
+  dbcalf:{n:'Dumbbell calf raise',k:'D',rest:60,T:25},
+  goblet:{n:'Goblet squat',k:'D',rest:90,T:32.5}
 };
 const KIND={M:'Machine',D:'Dumbbell',B:'Barbell'};
 // smallest real jump: dumbbells and barbells 2.5 kg, machine stacks 5 kg
 const STEP={M:5,D:2.5,B:2.5};
 const snap=(id,kg)=>{const st=STEP[EX[id].k];return Math.max(st,Math.round(kg/st)*st);};
-const PLAN={
-  A:{oct:[['latpd',3,10],['rowmach',3,10],['shpress',3,10],['cablecurl',3,12],['crunch',3,15]],
-     nov:[['latpd',3,10],['bbrow',3,10],['shpress',3,10],['dbhammer',3,12],['crunch',3,15]],
-     dec:[['latpd',3,10],['bbrow',3,10],['dbshp',3,10],['bbcurl',3,12],['crunch',3,15]]},
-  B:{oct:[['latpull',3,10],['cablerow',3,12],['cablecurl',3,12],['pushdown',3,12],['crunch',3,15]],
-     nov:[['latpull',3,10],['cablerow',3,12],['dbcurl',3,12],['dbohe',3,12],['crunch',3,15]],
-     dec:[['latpull',3,10],['cablerow',3,12],['dbhammer',3,12],['dbohe',3,12],['crunch',3,15]]},
-  L:{oct:[['goblet',3,10],['bbrdl',3,10],['legpress',3,10],['legcurl',3,12],['legext',3,12],['crunch',3,15]],
-     nov:[['goblet',3,10],['bbrdl',3,10],['legpress',3,10],['legcurl',3,12],['legext',3,12],['crunch',3,15]],
-     dec:[['bss',3,10],['bbrdl',3,10],['legpress',3,10],['legcurl',3,12],['legext',3,12],['crunch',3,15]]},
-  C:{oct:[['pecdeck',3,12],['latpd',3,12],['shpress',3,12],['pushdown',3,12],['crunch',3,15]],
-     nov:[['dbfly',3,12],['latpd',3,12],['dbshp',3,12],['pushdown',3,12],['crunch',3,15]],
-     dec:[['dbfly',3,12],['latpd',3,12],['dbshp',3,12],['cgbench',3,12],['crunch',3,15]]}
+// starter week (1 to 4 Oct) keeps the original sessions
+const PLAN0={
+  L:[['goblet',3,10],['bbrdl',3,10],['legpress',3,10],['legcurl',3,12],['legext',3,12],['crunch',3,15]],
+  C:[['pecdeck',3,12],['latpd',3,12],['shpress',3,12],['pushdown',3,12],['crunch',3,15]]
 };
-const exercisesFor = d=>{const t=dayType(d);return PLAN[t]?PLAN[t][monthKey(d)]:[];};
+// from Mon 5 Oct: [exercise, sets, rep range]
+const PLAN={
+  A:[['chestpress',3,'8–12'],['latpd',3,'8–12'],['rowmach',3,'8–12'],['pecdeck',2,'12–15'],['cablecurl',3,'10–15'],['pushdown',3,'10–15'],['crunch',3,'10–15']],
+  L:[['legpress',4,'8–12'],['bbrdl',3,'8–10'],['legcurl',4,'10–15'],['legext',3,'10–15'],['dbcalf',3,'10–15'],['crunch',3,'10–15']],
+  B:[['shpress',3,'8–12'],['latpd',3,'8–12'],['rowmach',3,'8–12'],['dblat',3,'12–15'],['cablecurl',3,'10–15'],['pushdown',3,'10–15'],['crunch',3,'10–15']],
+  C:[['latpd',3,'8–12'],['rowmach',3,'8–12'],['shpress',2,'10–12'],['pecdeck',2,'12–15'],['cablecurl',2,'10–15'],['pushdown',2,'10–15'],['crunch',3,'10–15']],
+  N:[['legpress',4,'10–12'],['bbrdl',3,'8–10'],['legcurl',4,'8–12'],['legext',3,'12–15'],['dbcalf',3,'10–15'],['crunch',3,'10–15']]
+};
+const exercisesFor = d=>(weekIdx(d)===0?PLAN0:PLAN)[dayType(d)]||[];
 
 // first week each exercise appears, and which weeks it is used
 const FIRST={}, USED={}, ORDER=[];
-ALL.forEach(d=>{exercisesFor(d).forEach(([id])=>{const w=weekIdx(d);if(!(id in FIRST)){FIRST[id]=w;ORDER.push(id);}(USED[id]=USED[id]||new Set()).add(w);});});
+ALL.forEach(d=>{exercisesFor(d).forEach(([id])=>{const w=weekIdx(d);if(!(id in FIRST))FIRST[id]=w;(USED[id]=USED[id]||new Set()).add(w);if(w>0&&!ORDER.includes(id))ORDER.push(id);});});
 
 /* ---------- bench ---------- */
 const BENCH={
@@ -315,7 +310,7 @@ const CARDIO={
 };
 function cardioFor(d){
   const t=dayType(d); if(t==='R')return null;
-  if(t==='L')return {n:'Incline treadmill walk',dt:'Legs are tired after leg day, so keep it steady: 10 to 12% incline at 5 km/h',m:20,k:150};
+  if(isLeg(t))return {n:'Incline treadmill walk',dt:'Legs are tired after leg day, so keep it steady: 10 to 12% incline at 5 km/h',m:20,k:150};
   if(t==='T')return {n:'Incline treadmill walk',dt:'Easy cool-down after your attempts',m:10,k:75};
   const c=CARDIO[weekIdx(d)];return {n:c[0],dt:c[1],m:c[2],k:c[3]};
 }
@@ -434,7 +429,7 @@ const MEALS=[['meal:b','Breakfast: Greek yogurt and granola'],['meal:l','Lunch: 
 function tasksFor(d){
   const t=dayType(d), a=[];
   if(t!=='R'){a.push('bench');exercisesFor(d).forEach(([id])=>a.push('ex:'+id));a.push('cardio');}
-  if(t==='L'){a.splice(a.indexOf('bench'),1);}
+  if(isLeg(t)){a.splice(a.indexOf('bench'),1);}
   a.push('steps');if(dayDiff(d,W1)>=0)MEALS.forEach(m=>a.push(m[0]));return a;
 }
 function gymTasks(d){return tasksFor(d).filter(x=>x==='bench'||x.startsWith('ex:')||x==='cardio');}
@@ -442,7 +437,7 @@ function sessionDone(d){const g=gymTasks(d);return g.length>0&&g.every(x=>isDone
 function dayPct(d){const a=tasksFor(d);return a.filter(x=>isDone(key(d),x)).length/a.length;}
 function liftMinutes(d){
   const t=dayType(d); if(t==='R')return 0;
-  let m=5; const b=t==='L'?null:benchFor(d);
+  let m=5; const b=isLeg(t)?null:benchFor(d);
   if(b&&b.test)m+=5*3+3*4;else if(b)m+=b.sets*(0.75+b.rest/60);
   exercisesFor(d).forEach(([id,s])=>{m+=s*(0.75+EX[id].rest/60)+1;});
   return m;
@@ -513,10 +508,10 @@ function viewToday(){
 
   if(t!=='R'){
     // warm-up
-    const b=t==='L'?null:benchFor(d);
+    const b=isLeg(t)?null:benchFor(d);
     h+=`<div class="sec">Warm-up <small>about 5 min</small></div><div class="card"><ul class="plain">`;
     if(b&&!b.test)h+=`<li>Bench warm-up: `+benchWarm(b.kg).map(([kg,r])=>kg+' kg × '+r).join(', ')+`</li>`;
-    if(t==='L')h+=`<li>One light set of goblet squats to warm your hips and knees</li>`;
+    if(isLeg(t)&&exercisesFor(d).length)h+=`<li>One light set of ${esc(EX[exercisesFor(d)[0][0]].n.toLowerCase())} to warm your hips and knees</li>`;
     h+=`</ul></div>`;
 
     if(b){
@@ -543,7 +538,7 @@ function viewToday(){
         const e=EX[id], p=planned(id,w,k), last=lastLog(id,k), lg=logOf(k,id), dn=isDone(k,'ex:'+id);
         const ld=last?parseKey(last.k):null;
         h+=`<div class="row ${dn?'done':''}"><input type="checkbox" class="tick" data-task="ex:${id}" ${dn?'checked':''} aria-label="${esc(e.n)} done">
-        <div><div class="nm">${esc(e.n)}<span class="tag">${KIND[e.k]}</span></div><div class="dt">${s} × ${r}${id==='bss'?' each leg':''}, rest ${restTxt(e.rest)}${e.k==='D'?', weight per dumbbell':''}</div>
+        <div><div class="nm">${esc(e.n)}<span class="tag">${KIND[e.k]}</span></div><div class="dt">${s} × ${r}, rest ${restTxt(e.rest)}${e.k==='D'?', weight per dumbbell':''}</div>
         ${p===null?'<div class="dt">First time: pick a weight you can lift for every rep with 1 to 2 left, then enter it.</div>':''}</div>
         <div class="wt">${p!==null?`<div class="p">${kgTxt(p)}<small> kg</small></div>`:`<div class="first">First time</div>`}
         <label class="log">${p!==null?'lifted':'start'} <input type="number" inputmode="decimal" step="${STEP[e.k]}" data-log="${id}" value="${lg!==null?kgTxt(lg):''}" placeholder="${p!==null?kgTxt(p):'kg'}" aria-label="Weight lifted for ${esc(e.n)}"></label>
@@ -580,7 +575,7 @@ function viewPlan(){
       const d=addDays(mon,i);
       if(d<START||d>END){h+=`<div class="dchip empty"></div>`;continue;}
       const t=dayType(d),full=dayPct(d)===1;
-      h+=`<button class="dchip ${t!=='R'?'gym':''} ${full?'full':''} ${key(d)===key(TODAY)?'today':''}" style="--c:${TYPES[t].c}" data-day="${key(d)}" aria-label="${fmt(d)}, ${TYPES[t].name}"><div class="dn">${DN[d.getDay()][0]}</div><div class="dd">${d.getDate()}</div><div class="dt">${t==='R'?'':t==='L'?'Leg':t==='T'?'Test':t}</div></button>`;
+      h+=`<button class="dchip ${t!=='R'?'gym':''} ${full?'full':''} ${key(d)===key(TODAY)?'today':''}" style="--c:${TYPES[t].c}" data-day="${key(d)}" aria-label="${fmt(d)}, ${TYPES[t].name}"><div class="dn">${DN[d.getDay()][0]}</div><div class="dd">${d.getDate()}</div><div class="dt">${t==='R'?'':isLeg(t)?'Leg':t==='T'?'Test':t}</div></button>`;
     }
     h+=`</div><div class="wk-info">Cardio: ${esc(c[0])}${bA?'. Heavy bench: '+(w===12?'single at '+r25(90*S.settings.oneRM/70):bA[0]+'×'+bA[1]+' at '+r25(bA[2]*S.settings.oneRM/70))+' kg':''}</div></div>`;
   });
@@ -588,7 +583,7 @@ function viewPlan(){
   <li>Complete every bench rep, then move on to next week's numbers.</li>
   <li>Miss reps and you repeat that week. Miss the same week twice, drop 5 kg and build back up.</li>
   <li>On everything else, when you hit the top reps on every set, go up next session.</li>
-  <li>When a new exercise starts in November or December, go light for the first week to learn it.</li>
+  <li>Use the rep range: when you hit the top of the range on every set, the weight goes up.</li>
   <li>Bench rest: 3 min heavy, 2 min volume, 2.5 min paused. Other lifts: 90s for big moves, 60s for small ones.</li></ul></div>`;
   return h;
 }
@@ -599,14 +594,14 @@ function viewWeights(){
   <div class="field"><label for="f2">Test day target<span class="hint">Your goal on 30 Dec</span></label><input id="f2" type="number" inputmode="decimal" step="2.5" data-set="target" value="${s.target}"></div>
   <div class="field"><label for="f3">Bodyweight<span class="hint">Used for calorie estimates</span></label><input id="f3" type="number" inputmode="decimal" step="0.5" data-set="bw" value="${s.bw}"></div></div>`;
 
-  h+=`<h2>Bench plan</h2><div class="scroll"><table class="bt"><thead><tr><th>Week of</th><th class="num">Mon heavy</th><th class="num">Wed volume</th><th class="num">Sat paused</th></tr></thead><tbody>`;
+  h+=`<h2>Bench plan</h2><div class="scroll"><table class="bt"><thead><tr><th>Week of</th><th class="num">Mon heavy</th><th class="num">Wed volume</th><th class="num">Fri paused</th></tr></thead><tbody>`;
   const sc=s.oneRM/70;
   for(let w=0;w<=13;w++){
     const r=BENCH[w]; const mon=w===0?new Date(2026,9,3):addDays(W1,(w-1)*7);
     const cell=x=>x?(x[0]===1&&x[1]===1?'Single '+r25(x[2]*sc):x[0]+'×'+x[1]+' @ '+r25(x[2]*sc)):'';
     let B=cell(r.B), C=cell(r.C);
     if(w===13)B='<b>Test</b>';
-    if(w===0)C=cell(r.C)+' (practice)';
+    if(w===0)C=cell(r.C)+' (Sat practice)';
     h+=`<tr><td>${mon.getDate()} ${MN[mon.getMonth()]}</td><td class="num">${cell(r.A)}</td><td class="num">${B}</td><td class="num">${C}</td></tr>`;
   }
   h+=`</tbody></table></div><p class="small muted" style="margin-top:8px">Weights in kg. Test day attempts: ${[.925,.975,1].map(x=>r25(x*s.target)).join(', ')} kg.</p>`;
